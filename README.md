@@ -1,2 +1,2 @@
 # walkback
-WALKBACK: a Marswalk (EVA) planner for the Mount Shap boxwork. NASA Space Apps 2026 student project.
+WALKBACK: a Marswalk (EVA) planner for the Mount Sharp boxwork. NASA Space Apps 2026 student project.

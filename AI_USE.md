@@ -10,6 +10,8 @@ This is a running log. Every AI tool that produces something adds a dated line h
 
 - 2026-11-14: Claude (Fable 5.2) wrote the base map (task T3): index.html, css/style.css, js/config.js and js/app.js. Leaflet map on the Mars Trek tile grid with five NASA base layers, stop markers, scale bar, north arrow, lat/lon readout and the empty four-tab panel.
 
+- 2026-11-14: Claude Code (Opus 5.5) wrote notebooks/fetch_data.ipynb, which cuts the elevation and colour-image crops and downloads Curiosity's waypoint, traverse and weather files.
+
 ## What the humans do
 
 The team chose the challenge, the site and the science stops, runs the data pipeline, checks numbers against their NASA sources, chooses the photographs and records the demo.
