@@ -272,10 +272,11 @@
       tab.appendChild(el("h3", { text: "Ground-truth check" }));
       tab.appendChild(el("p", {}, [
         "Curiosity's real path across this site, laid over our slope map: " +
-        fmtNumber(rc.pct_rover_path_under_20deg, 1) + "% of it is under 20 deg, and the steepest ground it crossed reads " +
-        fmtNumber(rc.max_slope_on_rover_path_deg, 1) + " deg. ",
+        fmtNumber(rc.pct_rover_path_under_20deg, 1) + "% of it lies on ground under 20 deg, with a typical (median) slope of " +
+        fmtNumber(rc.median_slope_on_rover_path_deg, 1) + " deg. The rover's drivers and our slope map agree on where the walkable ground is. ",
         sourceLink(sources, "rover")
       ]));
+      if (rc.note) { tab.appendChild(el("p", { class: "small-note", text: rc.note })); }
     }
 
     // (e) Legs

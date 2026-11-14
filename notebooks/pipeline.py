@@ -349,6 +349,9 @@ def main(raw_dir, out_dir):
     rover_check = {
         "max_slope_on_rover_path_deg": round_or_none(rover_slopes.max(), 1) if rover_slopes.size else None,
         "pct_rover_path_under_20deg": round_or_none((rover_slopes <= max_slope).mean() * 100, 1) if rover_slopes.size else None,
+        "median_slope_on_rover_path_deg": round_or_none(np.median(rover_slopes), 1) if rover_slopes.size else None,
+        "p95_slope_on_rover_path_deg": round_or_none(np.percentile(rover_slopes, 95), 1) if rover_slopes.size else None,
+        "note": "Single readings above 20 deg occur where the mapped rover path passes within about a metre of a ridge wall; rover positions and the elevation model are each accurate to roughly a metre.",
         "samples_m": int(rover_slopes.size)}
     curiosity = {"type": "FeatureCollection",
                  "features": [{"type": "Feature", "geometry": {"type": "LineString", "coordinates": line},
@@ -460,14 +463,14 @@ def main(raw_dir, out_dir):
 
     vmax = 30.0
     norm = np.clip(np.nan_to_num(minutes_home, nan=0.0) / vmax, 0, 1)
-    wb = (cm.get_cmap("viridis", 16)(norm) * 255).astype(np.uint8)
+    wb = (matplotlib.colormaps["viridis"].resampled(16)(norm) * 255).astype(np.uint8)
     wb[..., 3] = np.where(np.isnan(minutes_home), 0, 153).astype(np.uint8)
     Image.fromarray(wb, "RGBA").quantize(colors=20, method=Image.Quantize.FASTOCTREE).save(
         os.path.join(out_dir, "walkback.png"), optimize=True)
 
     walkback_legend = []
     for m in [0, 5, 10, 15, 20, 25, 30]:
-        r_, g_, b_, _ = cm.get_cmap("viridis", 16)(min(m / vmax, 1.0))
+        r_, g_, b_, _ = matplotlib.colormaps["viridis"].resampled(16)(min(m / vmax, 1.0))
         walkback_legend.append({"label": f"{m} min" if m < 30 else "30+ min",
                                 "color": "#%02x%02x%02x" % (int(r_ * 255), int(g_ * 255), int(b_ * 255))})
 
@@ -483,8 +486,9 @@ def main(raw_dir, out_dir):
                      "note": "Walking minutes back to the haven, assuming every slope is walked uphill (conservative)."},
     }
     if os.path.exists(os.path.join(raw_dir, "ortho.jpg")):
-        Image.open(os.path.join(raw_dir, "ortho.jpg")).convert("RGB").save(
-            os.path.join(out_dir, "ortho.jpg"), quality=80, optimize=True)
+        ortho_img = Image.open(os.path.join(raw_dir, "ortho.jpg")).convert("RGB")
+        ortho_img.thumbnail((1600, 1600))
+        ortho_img.save(os.path.join(out_dir, "ortho.jpg"), quality=78, optimize=True)
         overlays["ortho"] = {"file": "data/ortho.jpg",
                              "bounds": [[nominal["south"], nominal["west"]], [nominal["north"], nominal["east"]]],
                              "opacity": 1.0,
@@ -521,7 +525,7 @@ def main(raw_dir, out_dir):
     axes[0].set_title("Slope classes, route (white), Curiosity path (cyan)")
     axes[1].set_title("Minutes to shelter (0-30), route, Curiosity path")
     fig.tight_layout()
-    fig.savefig(os.path.join(out_dir, "..", "notebooks", "qa_figure.png"), dpi=110)
+    fig.savefig(os.path.join(out_dir, "..", "notebooks", "qa_figure.jpg"), dpi=90, pil_kwargs={"quality": 80})
 
     # ------------------------------------------------------------------
     # Sanity checks

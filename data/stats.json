@@ -1,0 +1,77 @@
+{
+  "total_distance_m": 1798.2,
+  "walk_time_min": 66.3,
+  "science_time_min": 140,
+  "eva_time_min": 206.3,
+  "ascent_m": 80.5,
+  "descent_m": 80.5,
+  "max_slope_on_route_deg": 19.3,
+  "max_range_from_haven_m": 712,
+  "max_time_to_haven_min": 34.1,
+  "gcr_dose_msv": 0.089,
+  "no_go_pct_of_site": 34.3,
+  "rover_check": {
+    "max_slope_on_rover_path_deg": 51.9,
+    "pct_rover_path_under_20deg": 93.5,
+    "median_slope_on_rover_path_deg": 11.6,
+    "p95_slope_on_rover_path_deg": 20.9,
+    "note": "Single readings above 20 deg occur where the mapped rover path passes within about a metre of a ridge wall; rover positions and the elevation model are each accurate to roughly a metre.",
+    "samples_m": 29581
+  },
+  "checks": [
+    {
+      "id": "slope",
+      "label": "Steepest slope on route",
+      "value": 19.3,
+      "limit": 20,
+      "unit": "deg",
+      "pass": true,
+      "source": "xeva_slope"
+    },
+    {
+      "id": "range",
+      "label": "Farthest straight-line distance from haven",
+      "value": 712,
+      "limit": 2000,
+      "unit": "m",
+      "pass": true,
+      "source": "xeva_range",
+      "note": "Historical walk-back assumption: 10000 m (source walkback)"
+    },
+    {
+      "id": "duration",
+      "label": "Total EVA time",
+      "value": 3.44,
+      "limit": 8,
+      "unit": "h",
+      "pass": true,
+      "source": "xeva_duration",
+      "flag": "outside the nominal 4 to 8 h band"
+    },
+    {
+      "id": "shelter",
+      "label": "Longest walk back to haven",
+      "value": 34.1,
+      "limit": 60,
+      "unit": "min",
+      "pass": true,
+      "source": "xeva_duration",
+      "assumption": "Limit equals the suit's 1-hour contingency capability"
+    },
+    {
+      "id": "daylight",
+      "label": "EVA fits the daylight window",
+      "unit": "local time",
+      "source": "rems",
+      "value": "07:22-10:48",
+      "limit": "07:22-15:20",
+      "pass": true,
+      "sol": 4718
+    }
+  ],
+  "notes": {
+    "time_to_haven": "Minutes to shelter use the conservative rule that every slope is walked uphill.",
+    "walk_time": "Route walking times use the real up or down slope along the path."
+  },
+  "generated_utc": "2026-11-14T22:35:30Z"
+}

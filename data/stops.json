@@ -5,13 +5,15 @@
     "role": "haven",
     "lon": 137.3864361,
     "lat": -4.79761763,
-    "elev_m": null,
+    "elev_m": -3657.6,
     "rover_sol": 4534,
     "science_min": 0,
     "objective": "Pressurised rover parked at the edge of the boxwork unit. Start and end of the EVA.",
     "finding": "Curiosity crossed into the boxwork unit on sol 4534 (7 May 2025).",
     "source_url": "https://gsameetings.secure-platform.com/connects25/solicitations/103002/sessiongallery/schedule/items/95386/application/10634",
-    "images": ["img7"]
+    "images": [
+      "img7"
+    ]
   },
   {
     "id": "S1",
@@ -25,7 +27,9 @@
     "objective": "Sample bedrock at the edge of the unit as a baseline.",
     "finding": "Curiosity drilled \"Altadena\" at the edge of the boxwork on 8 June 2025.",
     "source_url": "https://www.nasa.gov/?p=879744",
-    "images": ["img6"]
+    "images": [
+      "img6"
+    ]
   },
   {
     "id": "S2",
@@ -39,7 +43,9 @@
     "objective": "Examine a ridge crest and its central fracture.",
     "finding": "Curiosity confirmed the dark lines along ridge tops are fractures. Pea-size nodules sit on ridge walls and in hollows, not near the central fractures.",
     "source_url": "https://www.nasa.gov/missions/mars-science-laboratory/curiosity-rover/NASAs-curiosity-rover-sees-martian-spiderwebs-up-close/",
-    "images": ["img5"]
+    "images": [
+      "img5"
+    ]
   },
   {
     "id": "S3",
@@ -53,7 +59,9 @@
     "objective": "Sample bedrock on a hollow floor.",
     "finding": "Curiosity drilled \"Valle de la Luna\" here in October 2025. X-ray analysis found carbonate minerals.",
     "source_url": "https://science.nasa.gov/blog/curiosity-blog-sols-4689-4694-drill-in-the-boxwork-unit-is-go/",
-    "images": ["img3"]
+    "images": [
+      "img3"
+    ]
   },
   {
     "id": "S4",
@@ -67,7 +75,10 @@
     "objective": "Sample the ridge top about 10 m away and 2 m higher than the hollow.",
     "finding": "Curiosity drilled \"Nevado Sajama\" on sol 4718 (13 Nov 2025). X-ray analysis found clay minerals.",
     "source_url": "https://science.nasa.gov/blog/curiosity-blog-sols-4709-4715-drilling-high-and-low-in-the-boxwork-unit",
-    "images": ["img1", "img2"]
+    "images": [
+      "img1",
+      "img2"
+    ]
   },
   {
     "id": "S5",
@@ -81,6 +92,8 @@
     "objective": "Panorama and scouting of ridges and hollows to the east.",
     "finding": "Curiosity drove north-east along this wide ridge in February 2026 for a view of targets to the east.",
     "source_url": "https://science.nasa.gov/blog/curiosity-blog-sols-4804-4811-kicking-off-the-final-phase-of-boxwork-exploration",
-    "images": ["img4"]
+    "images": [
+      "img4"
+    ]
   }
 ]

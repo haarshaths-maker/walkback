@@ -1,0 +1,119 @@
+{
+  "slope": {
+    "file": "data/slope.png",
+    "bounds": [
+      [
+        -4.8169807,
+        137.3739864
+      ],
+      [
+        -4.7939861,
+        137.3919874
+      ]
+    ],
+    "opacity": 1.0,
+    "legend": [
+      {
+        "label": "5-10 deg",
+        "color": "#abd9e9"
+      },
+      {
+        "label": "10-15 deg",
+        "color": "#ffffbf"
+      },
+      {
+        "label": "15-20 deg",
+        "color": "#fdae61"
+      },
+      {
+        "label": "over 20 deg (no-go)",
+        "color": "#d7191c"
+      }
+    ]
+  },
+  "hillshade": {
+    "file": "data/hillshade.jpg",
+    "bounds": [
+      [
+        -4.8169807,
+        137.3739864
+      ],
+      [
+        -4.7939861,
+        137.3919874
+      ]
+    ],
+    "opacity": 0.5,
+    "legend": [
+      {
+        "label": "Shaded relief from the 1 m elevation model, sun from the north-west",
+        "color": "#9aa7b6"
+      }
+    ]
+  },
+  "walkback": {
+    "file": "data/walkback.png",
+    "bounds": [
+      [
+        -4.8169807,
+        137.3739864
+      ],
+      [
+        -4.7939861,
+        137.3919874
+      ]
+    ],
+    "opacity": 1.0,
+    "legend": [
+      {
+        "label": "0 min",
+        "color": "#440154"
+      },
+      {
+        "label": "5 min",
+        "color": "#462f7c"
+      },
+      {
+        "label": "10 min",
+        "color": "#30678d"
+      },
+      {
+        "label": "15 min",
+        "color": "#1e988a"
+      },
+      {
+        "label": "20 min",
+        "color": "#35b778"
+      },
+      {
+        "label": "25 min",
+        "color": "#a5da35"
+      },
+      {
+        "label": "30+ min",
+        "color": "#fde724"
+      }
+    ],
+    "note": "Walking minutes back to the haven, assuming every slope is walked uphill (conservative)."
+  },
+  "ortho": {
+    "file": "data/ortho.jpg",
+    "bounds": [
+      [
+        -4.817,
+        137.374
+      ],
+      [
+        -4.794,
+        137.392
+      ]
+    ],
+    "opacity": 1.0,
+    "legend": [
+      {
+        "label": "HiRISE colour mosaic crop (USGS, Calef and Parker 2016)",
+        "color": "#c48a5a"
+      }
+    ]
+  }
+}

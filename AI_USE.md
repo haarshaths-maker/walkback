@@ -14,6 +14,8 @@ This is a running log. Every AI tool that produces something adds a dated line h
 
 - 2026-11-14: Claude Code (Opus 5.5) wrote notebooks/pipeline.py (slope, no-go mask, least-time route, minutes-to-shelter, profile, rover ground-truth check, weather filter, stats and checks), js/plan.js (overlays, legend, route, Curiosity path, Plan tab, elevation profile) and data/sources.json.
 
+- 2026-11-14: Claude Code (Opus 5.5) ran notebooks/pipeline.py on the raw crop the team fetched in Colab and generated every file in /data (route, overlays, profile, stats, weather, Curiosity path). The team supplied the raw data.
+
 ## What the humans do
 
 The team chose the challenge, the site and the science stops, runs the data pipeline, checks numbers against their NASA sources, chooses the photographs and records the demo.
