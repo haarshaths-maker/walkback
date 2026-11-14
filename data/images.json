@@ -1,0 +1,98 @@
+[
+  {
+    "id": "img1",
+    "file": "img/nevado_sajama_workspace_sol4709.jpg",
+    "stop": "S4",
+    "exact_location": true,
+    "title": "Nevado Sajama drill workspace on the ridge, with the hollow behind",
+    "camera": "Left Navcam",
+    "sol": 4709,
+    "date": "2025-11-04",
+    "credit": "NASA/JPL-Caltech",
+    "source_url": "https://science.nasa.gov/blog/curiosity-blog-sols-4709-4715-drilling-high-and-low-in-the-boxwork-unit"
+  },
+  {
+    "id": "img2",
+    "file": "img/nevado_sajama_drillhole_sol4718.jpg",
+    "stop": "S4",
+    "exact_location": true,
+    "title": "Nevado Sajama drill hole",
+    "camera": "Left Navcam",
+    "sol": 4718,
+    "date": "2025-11-13",
+    "credit": "NASA/JPL-Caltech",
+    "source_url": "https://science.nasa.gov/solar-system/curiosity-blog-sols-4716-4722-drilling-success-at-nevado-sajama"
+  },
+  {
+    "id": "img3",
+    "file": "img/valle_de_la_luna_sol4687.jpg",
+    "stop": "S3",
+    "exact_location": true,
+    "title": "Valle de la Luna block in the Monte Grande hollow",
+    "camera": "Front Hazcam",
+    "sol": 4687,
+    "date": "2025-10-12",
+    "credit": "NASA/JPL-Caltech",
+    "source_url": "https://science.nasa.gov/blog/curiosity-blog-sols-4689-4694-drill-in-the-boxwork-unit-is-go/"
+  },
+  {
+    "id": "img4",
+    "file": "img/boxwork_panorama_pia26693.jpg",
+    "stop": "S5",
+    "exact_location": false,
+    "title": "Panorama of boxwork ridges and hollows",
+    "camera": "Mastcam",
+    "sol": null,
+    "date": "2025-09-26",
+    "credit": "NASA/JPL-Caltech/MSSS",
+    "source_url": "https://www.nasa.gov/missions/mars-science-laboratory/curiosity-rover/NASAs-curiosity-rover-sees-martian-spiderwebs-up-close/"
+  },
+  {
+    "id": "img5",
+    "file": "img/nodules_pia26697.jpg",
+    "stop": "S2",
+    "exact_location": false,
+    "title": "Pea-size nodules on the boxwork",
+    "camera": null,
+    "sol": null,
+    "date": "2025-08-21",
+    "credit": "NASA/JPL-Caltech/MSSS",
+    "source_url": "https://www.nasa.gov/missions/mars-science-laboratory/curiosity-rover/NASAs-curiosity-rover-sees-martian-spiderwebs-up-close/"
+  },
+  {
+    "id": "img6",
+    "file": "img/ridge_closeup_pia26558.png",
+    "stop": "S1",
+    "exact_location": false,
+    "title": "Low fractured boxwork ridge",
+    "camera": null,
+    "sol": null,
+    "date": "2025-05-16",
+    "credit": "NASA/JPL-Caltech/MSSS",
+    "source_url": "https://www.nasa.gov/?p=879744"
+  },
+  {
+    "id": "img7",
+    "file": "img/boxwork_distance_pia26560.jpg",
+    "stop": "HAVEN",
+    "exact_location": false,
+    "title": "Boxwork region seen from a distance",
+    "camera": null,
+    "sol": null,
+    "date": "2025",
+    "credit": "NASA/JPL-Caltech/MSSS",
+    "source_url": "https://www.nasa.gov/?p=879744"
+  },
+  {
+    "id": "img8",
+    "file": "img/spiderwebs_orbit_pia26306.jpg",
+    "stop": null,
+    "exact_location": false,
+    "title": "Boxwork \"spiderweb\" pattern seen from orbit",
+    "camera": "HiRISE",
+    "sol": null,
+    "date": null,
+    "credit": "NASA/JPL-Caltech/Univ. of Arizona",
+    "source_url": "https://images.nasa.gov/details/PIA26306"
+  }
+]

@@ -1,0 +1,19 @@
+{
+  "project": "WALKBACK",
+  "tagline": "Plan the walk out. Know the walk back.",
+  "body_radius_m": 3396190,
+  "metres_per_degree": 59274.7,
+  "bounds": { "west": 137.3740, "east": 137.3920, "south": -4.8170, "north": -4.7940 },
+  "default_sol": 4718,
+  "limits": {
+    "max_slope_deg": 20,
+    "max_range_m": 2000,
+    "walkback_assumption_m": 10000,
+    "eva_nominal_h": 6,
+    "eva_max_h": 8,
+    "shelter_limit_min": 60,
+    "flat_speed_kmh": 2.0,
+    "gcr_msv_per_h": 0.026,
+    "daylight_margin_h": 2
+  }
+}
