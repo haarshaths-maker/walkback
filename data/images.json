@@ -9,7 +9,8 @@
     "sol": 4709,
     "date": "2025-11-04",
     "credit": "NASA/JPL-Caltech",
-    "source_url": "https://science.nasa.gov/blog/curiosity-blog-sols-4709-4715-drilling-high-and-low-in-the-boxwork-unit"
+    "source_url": "https://science.nasa.gov/blog/curiosity-blog-sols-4709-4715-drilling-high-and-low-in-the-boxwork-unit",
+    "remote_url": "https://assets.science.nasa.gov/content/dam/science/missions/msl/2025/curiosity-rover-updates/november/https___mars.nasa.gov_msl-raw-images_proj_msl_redops_ods_surface_sol_04709_opgs_edr_ncam_NLB_815536970EDR_F1200000NCAM00261M_.jpg"
   },
   {
     "id": "img2",
@@ -21,7 +22,8 @@
     "sol": 4718,
     "date": "2025-11-13",
     "credit": "NASA/JPL-Caltech",
-    "source_url": "https://science.nasa.gov/solar-system/curiosity-blog-sols-4716-4722-drilling-success-at-nevado-sajama"
+    "source_url": "https://science.nasa.gov/solar-system/curiosity-blog-sols-4716-4722-drilling-success-at-nevado-sajama",
+    "remote_url": "https://assets.science.nasa.gov/content/dam/science/missions/msl/2025/curiosity-rover-updates/november/https___mars.nasa.gov_msl-raw-images_proj_msl-red-vol2_redops_ods_surface_sol_04718_opgs_edr_ncam_NLB_816331121EDR_F1200082NCAM00309M_.jpg"
   },
   {
     "id": "img3",
@@ -33,7 +35,8 @@
     "sol": 4687,
     "date": "2025-10-12",
     "credit": "NASA/JPL-Caltech",
-    "source_url": "https://science.nasa.gov/blog/curiosity-blog-sols-4689-4694-drill-in-the-boxwork-unit-is-go/"
+    "source_url": "https://science.nasa.gov/blog/curiosity-blog-sols-4689-4694-drill-in-the-boxwork-unit-is-go/",
+    "remote_url": "https://assets.science.nasa.gov/content/dam/science/missions/msl/2025/curiosity-rover-updates/october/https___mars.nasa.gov_msl-raw-images_proj_msl_redops_ods_surface_sol_04687_opgs_edr_fcam_FLB_813578617EDR_F1191722FHAZ00302M_.jpg"
   },
   {
     "id": "img4",
@@ -45,7 +48,8 @@
     "sol": null,
     "date": "2025-09-26",
     "credit": "NASA/JPL-Caltech/MSSS",
-    "source_url": "https://www.nasa.gov/missions/mars-science-laboratory/curiosity-rover/NASAs-curiosity-rover-sees-martian-spiderwebs-up-close/"
+    "source_url": "https://www.nasa.gov/missions/mars-science-laboratory/curiosity-rover/NASAs-curiosity-rover-sees-martian-spiderwebs-up-close/",
+    "remote_url": "https://www.nasa.gov/wp-content/uploads/2026/02/1-pia26693-curiosity-surveys-the-boxwork-region-web.jpg"
   },
   {
     "id": "img5",
@@ -57,7 +61,8 @@
     "sol": null,
     "date": "2025-08-21",
     "credit": "NASA/JPL-Caltech/MSSS",
-    "source_url": "https://www.nasa.gov/missions/mars-science-laboratory/curiosity-rover/NASAs-curiosity-rover-sees-martian-spiderwebs-up-close/"
+    "source_url": "https://www.nasa.gov/missions/mars-science-laboratory/curiosity-rover/NASAs-curiosity-rover-sees-martian-spiderwebs-up-close/",
+    "remote_url": "https://www.nasa.gov/wp-content/uploads/2026/02/e1-pj-only-pia26697-curiosity-studies-nodules-on-mount-sharps-boxwork-formations.jpg"
   },
   {
     "id": "img6",
@@ -69,7 +74,8 @@
     "sol": null,
     "date": "2025-05-16",
     "credit": "NASA/JPL-Caltech/MSSS",
-    "source_url": "https://www.nasa.gov/?p=879744"
+    "source_url": "https://www.nasa.gov/?p=879744",
+    "remote_url": "https://www.nasa.gov/wp-content/uploads/2025/06/e2-pia26558-curiosity-views-a-fractured-boxwork-ridge-up-close.png"
   },
   {
     "id": "img7",
@@ -81,7 +87,8 @@
     "sol": null,
     "date": "2025",
     "credit": "NASA/JPL-Caltech/MSSS",
-    "source_url": "https://www.nasa.gov/?p=879744"
+    "source_url": "https://www.nasa.gov/?p=879744",
+    "remote_url": "https://www.nasa.gov/wp-content/uploads/2025/06/pia26560-curiosity-views-boxwork-at-a-distance.jpg"
   },
   {
     "id": "img8",
@@ -93,6 +100,7 @@
     "sol": null,
     "date": null,
     "credit": "NASA/JPL-Caltech/Univ. of Arizona",
-    "source_url": "https://images.nasa.gov/details/PIA26306"
+    "source_url": "https://images.nasa.gov/details/PIA26306",
+    "remote_url": null
   }
 ]

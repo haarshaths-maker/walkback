@@ -133,12 +133,12 @@
     curiosity.features.forEach(function (f) {
       if (f.geometry.type === "LineString") {
         L.polyline(f.geometry.coordinates.map(function (c) { return [c[1], c[0]]; }), {
-          color: "#38d6ff", weight: 2, dashArray: "5 6", opacity: 0.9, interactive: false
+          color: "#38d6ff", weight: 2.5, opacity: 0.9, interactive: false   // solid cyan so it is easy to see
         }).addTo(group);
       } else if (f.geometry.type === "Point") {
         var c = f.geometry.coordinates;
         L.circleMarker([c[1], c[0]], {
-          radius: 3, color: "#38d6ff", weight: 1, fillColor: "#0b0f14", fillOpacity: 1
+          radius: 2.5, color: "#38d6ff", weight: 1, fillColor: "#0b0f14", fillOpacity: 1
         }).bindTooltip("Curiosity stopped here, sol " + f.properties.sol).addTo(group);
       }
     });

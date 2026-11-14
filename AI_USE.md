@@ -16,6 +16,8 @@ This is a running log. Every AI tool that produces something adds a dated line h
 
 - 2026-11-14: Claude Code (Opus 5.5) ran notebooks/pipeline.py on the raw crop the team fetched in Colab and generated every file in /data (route, overlays, profile, stats, weather, Curiosity path). The team supplied the raw data.
 
+- 2026-11-14: Claude Code (Opus 5.5) wrote js/stops.js (Stops tab with stop cards, arrival times, photo viewer, marker-to-card links; Sources tab with limit citations, data credits, limitations and AI note), added the T10 styles to css/style.css, added remote_url photo links to data/images.json, and made Curiosity's path a solid cyan line in js/plan.js.
+
 ## What the humans do
 
 The team chose the challenge, the site and the science stops, runs the data pipeline, checks numbers against their NASA sources, chooses the photographs and records the demo.

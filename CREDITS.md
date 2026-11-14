@@ -33,6 +33,17 @@ Student project for the 2026 NASA Space Apps Challenge. Not affiliated with or e
 
 The eight NASA images are listed with their credit lines in data/images.json and docs/SPEC.md section 8.
 
+Shown on the stop cards. The team could not download them into /img yet, so the site loads each one from its NASA link (the "remote_url" field in data/images.json).
+
+- img1: Nevado Sajama drill workspace on the ridge, Left Navcam, sol 4709. NASA/JPL-Caltech. https://science.nasa.gov/blog/curiosity-blog-sols-4709-4715-drilling-high-and-low-in-the-boxwork-unit
+- img2: Nevado Sajama drill hole, Left Navcam, sol 4718. NASA/JPL-Caltech. https://science.nasa.gov/solar-system/curiosity-blog-sols-4716-4722-drilling-success-at-nevado-sajama
+- img3: Valle de la Luna block in the Monte Grande hollow, Front Hazcam, sol 4687. NASA/JPL-Caltech. https://science.nasa.gov/blog/curiosity-blog-sols-4689-4694-drill-in-the-boxwork-unit-is-go/
+- img4: Panorama of boxwork ridges and hollows (PIA26693), Mastcam. NASA/JPL-Caltech/MSSS. https://www.nasa.gov/missions/mars-science-laboratory/curiosity-rover/NASAs-curiosity-rover-sees-martian-spiderwebs-up-close/
+- img5: Pea-size nodules on the boxwork (PIA26697). NASA/JPL-Caltech/MSSS. https://www.nasa.gov/missions/mars-science-laboratory/curiosity-rover/NASAs-curiosity-rover-sees-martian-spiderwebs-up-close/
+- img6: Low fractured boxwork ridge (PIA26558). NASA/JPL-Caltech/MSSS. https://www.nasa.gov/?p=879744
+- img7: Boxwork region seen from a distance (PIA26560). NASA/JPL-Caltech/MSSS. https://www.nasa.gov/?p=879744
+- img8: Boxwork "spiderweb" pattern from orbit (PIA26306), HiRISE. NASA/JPL-Caltech/Univ. of Arizona. https://images.nasa.gov/details/PIA26306 (not used yet: its direct JPG link could not be confirmed)
+
 ## Software
 
 Leaflet 1.9.4. (Pipeline libraries are added here when the notebook is written.)

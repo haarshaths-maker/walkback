@@ -250,3 +250,105 @@ svg.profile .axis { fill: var(--muted); font-size: 9px; font-family: var(--mono)
 .legend-note { color: var(--accent); font-size: 11px; margin-top: 4px; }
 .route-arrow { width: 14px; height: 14px; }
 .leaflet-image-layer { image-rendering: auto; }
+
+/* ---------------- Stops tab (T10) ---------------- */
+.stop-card {
+  background: var(--panel-2);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 0 0 12px;
+  margin: 0 0 14px;
+  overflow: hidden;
+  cursor: pointer;
+  scroll-margin-top: 8px;
+}
+.stop-card:hover { border-color: #3a4a61; }
+.stop-card.is-highlighted { border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent); }
+.stop-card > :not(.stop-photo) { margin-left: 12px; margin-right: 12px; }
+.stop-photo { position: relative; margin: 0 0 10px; background: #05070a; }
+.stop-photo-btn { display: block; width: 100%; padding: 0; border: 0; background: none; cursor: zoom-in; }
+.stop-photo-img { display: block; width: 100%; height: 180px; object-fit: cover; }
+.photo-tag, .photo-count {
+  position: absolute;
+  top: 8px;
+  padding: 2px 8px;
+  border-radius: 4px;
+  background: rgba(11, 15, 20, 0.88);
+  color: var(--text);
+  font-size: 12px;
+  pointer-events: none;
+}
+.photo-tag { left: 8px; }
+.photo-count { right: 8px; }
+.photo-credit { padding: 4px 12px 0; font-size: 12px; color: var(--muted); }
+.stop-head { display: flex; align-items: center; gap: 8px; margin-top: 10px; }
+.stop-badge {
+  flex: 0 0 auto;
+  padding: 1px 8px;
+  border: 1px solid var(--text);
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+}
+.stop-badge.is-haven { background: var(--accent); color: #0b0f14; border-color: var(--accent); border-radius: 4px; }
+.stop-name { margin: 0; font-size: 17px; }
+.stop-objective { margin: 6px 12px 8px; }
+.stop-label { font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
+.stop-finding { margin: 2px 12px 8px; }
+.stop-facts { display: grid; grid-template-columns: auto 1fr; gap: 4px 12px; margin-top: 4px; margin-bottom: 10px; }
+.stop-facts dt { color: var(--muted); }
+.stop-facts dd { margin: 0; text-align: right; font-family: var(--mono); }
+.stop-actions { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.stop-actions a { color: var(--text); }
+.stop-fly {
+  min-height: 36px;
+  padding: 6px 12px;
+  background: transparent;
+  color: var(--text);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  font: inherit;
+  cursor: pointer;
+}
+.stop-fly:hover { border-color: var(--accent); }
+
+/* Photo viewer */
+.viewer {
+  position: fixed;
+  inset: 0;
+  z-index: 3000;
+  display: grid;
+  place-items: center;
+  padding: 16px;
+  background: rgba(5, 7, 10, 0.92);
+}
+.viewer[hidden] { display: none; }
+.viewer-inner { max-width: min(1100px, 100%); max-height: 100%; display: flex; flex-direction: column; gap: 8px; }
+.viewer-top { display: flex; justify-content: space-between; align-items: center; color: var(--muted); }
+.viewer-img { max-width: 100%; max-height: calc(100vh - 200px); object-fit: contain; align-self: center; }
+.viewer-caption { color: var(--text); }
+.viewer-title { font-weight: 700; }
+.viewer-meta { color: var(--muted); font-size: 13px; }
+.viewer-meta a { color: var(--text); }
+.viewer-nav { display: flex; justify-content: space-between; }
+.viewer-btn {
+  min-height: 40px;
+  padding: 6px 14px;
+  background: var(--panel);
+  color: var(--text);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  font: inherit;
+  cursor: pointer;
+}
+.viewer-btn:hover { border-color: var(--accent); }
+.viewer-btn[hidden] { display: none; }
+
+/* Sources tab */
+.source-list { padding-left: 18px; margin: 0; font-size: 13.5px; }
+.source-list li { margin: 0 0 8px; }
+.source-list a, #tab-sources a { color: var(--text); }
+.source-sub { margin-top: 4px; color: var(--muted); }
+.disclaimer { margin-top: 20px; padding-top: 10px; border-top: 1px solid var(--line); color: var(--muted); }
+.stop-facts dd { white-space: nowrap; }
+.stop-facts dd .assumption { white-space: normal; text-align: right; }
