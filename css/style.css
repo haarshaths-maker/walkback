@@ -434,3 +434,168 @@ svg.daybar .axis { fill: var(--muted); font-size: 9px; font-family: var(--mono);
 @media (max-width: 800px) {
   .storm-banner { left: 50px; right: 10px; max-width: none; min-width: 0; font-size: 13px; }
 }
+
+/* ---------------- Helmet HUD (T14) ---------------- */
+/* Every HUD text is at least 24 px, light on near-black for contrast above 7:1. */
+.topbar-right { display: flex; align-items: center; gap: 14px; }
+.hud-open-btn {
+  min-height: 36px;
+  padding: 4px 16px;
+  background: transparent;
+  color: var(--accent);
+  border: 2px solid var(--accent);
+  border-radius: 6px;
+  font: inherit;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  cursor: pointer;
+}
+.hud-open-btn:hover { background: var(--accent); color: #0b0f14; }
+.hud-open-btn:disabled { opacity: 0.4; cursor: default; }
+body.hud-is-open { overflow: hidden; }
+
+.hud {
+  position: fixed;
+  inset: 0;
+  z-index: 4000;
+  overflow: hidden;
+  background: #05070a;
+  color: #ffffff;
+  font-size: 24px;
+  line-height: 1.2;
+}
+.hud[hidden] { display: none; }
+.hud-bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: brightness(0.38) saturate(0.8);
+}
+.hud-bg[hidden] { display: none; }
+/* Curved visor edge: a dark ellipse frame with a soft inner shadow. */
+.hud-visor {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(ellipse 72% 78% at 50% 48%, transparent 62%, rgba(0, 0, 0, 0.55) 80%, #000 100%);
+}
+.hud-visor::after {
+  content: "";
+  position: absolute;
+  inset: 10px;
+  border: 3px solid rgba(230, 237, 243, 0.25);
+  border-radius: 50% / 38%;
+  box-shadow: inset 0 0 60px rgba(0, 0, 0, 0.6);
+}
+
+.hud-readout {
+  position: absolute;
+  max-width: 30vw;
+  padding: 10px 16px;
+  background: rgba(5, 7, 10, 0.85);
+  border: 2px solid rgba(230, 237, 243, 0.55);
+  border-radius: 10px;
+}
+.hud-label { font-size: 24px; font-weight: 800; letter-spacing: 0.12em; color: var(--accent); }
+.hud-value { font-size: 40px; font-weight: 800; font-family: var(--mono); display: inline-block; }
+.hud-sub { font-size: 24px; color: #e6edf3; }
+.hud-tl { top: 80px; left: 6vw; }
+.hud-tc { top: 80px; left: 50%; transform: translateX(-50%); text-align: center; }
+.hud-tr { top: 80px; right: 6vw; text-align: right; }
+.hud-bl { bottom: 150px; left: 6vw; }
+.hud-br { bottom: 150px; right: 6vw; text-align: right; }
+.hud-shelter .hud-value { font-size: 96px; line-height: 1; }
+.hud-swatch {
+  display: inline-block;
+  width: 28px;
+  height: 28px;
+  margin-right: 10px;
+  vertical-align: middle;
+  border: 2px solid #ffffff;
+  border-radius: 4px;
+}
+
+.hud-alert {
+  position: absolute;
+  top: 14px;
+  left: 50%;
+  transform: translateX(-50%);
+  max-width: 90vw;
+  padding: 8px 20px;
+  background: #7a0000;
+  color: #ffffff;
+  border: 3px solid var(--fail);
+  border-radius: 8px;
+  font-weight: 800;
+  z-index: 2;
+}
+.hud-alert[hidden] { display: none; }
+
+.hud-science {
+  position: absolute;
+  top: 240px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 8px 18px;
+  background: rgba(5, 7, 10, 0.9);
+  border: 2px solid var(--accent);
+  border-radius: 8px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+.hud-science[hidden] { display: none; }
+
+.hud-mini-wrap {
+  position: absolute;
+  bottom: 96px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 220px;
+  height: 220px;
+}
+.hud-mini { width: 100%; height: 100%; display: block; }
+.hud-mini-n { fill: #ffffff; font-size: 24px; font-weight: 800; font-family: var(--font); }
+
+.hud-controls {
+  position: absolute;
+  left: 50%;
+  bottom: 40px;
+  transform: translateX(-50%);
+  width: min(900px, 92vw);
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.hud-slider { flex: 1 1 auto; accent-color: var(--accent); height: 28px; }
+.hud-btn {
+  min-height: 48px;
+  padding: 6px 18px;
+  background: rgba(5, 7, 10, 0.9);
+  color: #ffffff;
+  border: 2px solid #ffffff;
+  border-radius: 8px;
+  font: inherit;
+  font-size: 24px;
+  font-weight: 800;
+  cursor: pointer;
+}
+.hud-btn:hover, .hud-btn:focus-visible { border-color: var(--accent); outline: 3px solid var(--accent); outline-offset: 2px; }
+.hud-caption {
+  position: absolute;
+  left: 50%;
+  bottom: 4px;
+  transform: translateX(-50%);
+  font-size: 24px;
+  color: #e6edf3;
+  white-space: nowrap;
+  text-shadow: 0 1px 3px #000;
+}
+/* HUD layout fixes: one-line alert banner above the top readouts; shelter number on one line. */
+.hud-alert { width: max-content; white-space: nowrap; padding: 6px 20px; }
+.hud-shelter { max-width: none; }
+.hud-shelter .hud-value { white-space: nowrap; }
+.hud-tl, .hud-tc, .hud-tr { top: 84px; }
+/* Keep the shelter number the largest text but let it shrink on smaller laptops so it clears the mini-map. */
+.hud-shelter .hud-value { font-size: clamp(56px, 6vw, 96px); }

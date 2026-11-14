@@ -20,6 +20,8 @@ This is a running log. Every AI tool that produces something adds a dated line h
 
 - 2026-11-14: Claude Code (Opus 5.5) wrote js/conditions.js (Conditions tab: REMS weather replay with sol picker, EVA daylight window with a 24-hour bar, radiation card, solar storm drill with alert banner, crew-position slider, minutes to shelter and the nearest stop's escape path, DONKI link) and added the T13 styles to css/style.css.
 
+- 2026-11-14: Claude Code (Opus 5.5) wrote js/hud.js (helmet HUD: full-screen visor view with six readouts, north-up mini-map, and a walk simulator at 60x walking speed with science-stop pauses, sharing the crew position with the storm drill), added the HUD button to index.html and the T14 styles to css/style.css.
+
 ## What the humans do
 
 The team chose the challenge, the site and the science stops, runs the data pipeline, checks numbers against their NASA sources, chooses the photographs and records the demo.
