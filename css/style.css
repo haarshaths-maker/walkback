@@ -352,3 +352,85 @@ svg.profile .axis { fill: var(--muted); font-size: 9px; font-family: var(--mono)
 .disclaimer { margin-top: 20px; padding-top: 10px; border-top: 1px solid var(--line); color: var(--muted); }
 .stop-facts dd { white-space: nowrap; }
 .stop-facts dd .assumption { white-space: normal; text-align: right; }
+
+/* ---------------- Conditions tab and storm drill (T13) ---------------- */
+.visually-hidden {
+  position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0;
+  overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
+.replay-label { margin: 0 0 10px; color: var(--accent); font-weight: 600; }
+.sol-row { display: flex; align-items: center; gap: 12px; }
+.sol-picker {
+  min-height: 40px;
+  padding: 6px 10px;
+  background: var(--panel-2);
+  color: var(--text);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  font: inherit;
+  font-family: var(--mono);
+}
+.sol-date { color: var(--muted); font-family: var(--mono); font-size: 14px; }
+.cond-card { background: var(--panel-2); border: 1px solid var(--line); border-radius: 8px; padding: 12px; }
+.cond-card .totals { margin-bottom: 8px; }
+.cond-card .small-note { margin: 6px 0 0; }
+.cond-card a { color: var(--text); }
+.check-line { margin: 8px 0 4px; }
+.daybar-wrap { margin-bottom: 10px; }
+svg.daybar { width: 100%; height: auto; display: block; }
+svg.daybar .axis { fill: var(--muted); font-size: 9px; font-family: var(--mono); }
+.daybar-key { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 6px; font-size: 12px; color: var(--muted); }
+.key { display: inline-block; width: 14px; height: 10px; border: 1px solid var(--line); border-radius: 2px; }
+.key-night { background: #05070a; }
+.key-margin { background: repeating-linear-gradient(45deg, #2a3446 0 3px, #9aa7b6 3px 4.5px); }
+.key-window { background: #1d3b33; border-color: var(--pass); }
+.key-eva { background: var(--accent); }
+
+.drill-card { border-color: #5a2a2a; }
+.drill-btn {
+  width: 100%;
+  min-height: 44px;
+  margin-bottom: 6px;
+  padding: 8px 12px;
+  background: #7a0000;
+  color: #ffffff;
+  border: 1px solid var(--fail);
+  border-radius: 6px;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+.drill-btn:disabled { opacity: 0.55; cursor: default; }
+.drill-active { margin-top: 12px; }
+.drill-active[hidden] { display: none; }
+.drill-label { display: block; color: var(--muted); font-size: 13px; }
+#crew-slider { width: 100%; margin: 8px 0; accent-color: var(--fail); }
+.drill-position { font-family: var(--mono); font-size: 13px; }
+.drill-shelter { margin: 8px 0 2px; font-size: 26px; font-weight: 800; font-family: var(--mono); }
+.drill-active .stop-fly { margin-top: 10px; }
+.donki { margin-top: 16px; }
+.donki a { color: var(--text); }
+
+/* Red alert banner over the map (dark red behind white text for strong contrast) */
+.storm-banner {
+  position: absolute;
+  top: 12px;
+  left: 56px;
+  z-index: 1000;
+  max-width: min(460px, calc(100% - 420px));
+  min-width: 260px;
+  padding: 10px 14px;
+  background: #7a0000;
+  color: #ffffff;
+  border: 2px solid var(--fail);
+  border-radius: 8px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
+  font-size: 14px;
+}
+.storm-banner[hidden] { display: none; }
+.storm-banner a { color: #ffffff; }
+.storm-title { font-weight: 800; font-size: 16px; margin-bottom: 4px; }
+.storm-rule { margin: 4px 0; font-weight: 600; }
+@media (max-width: 800px) {
+  .storm-banner { left: 50px; right: 10px; max-width: none; min-width: 0; font-size: 13px; }
+}
