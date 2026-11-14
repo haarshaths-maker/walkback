@@ -211,3 +211,42 @@ html, body {
   }
   .coord-readout { font-size: 12px; }
 }
+
+/* ---------------- Plan tab (T7) ---------------- */
+.tab-body h3 { font-size: 13px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); margin: 20px 0 8px; }
+.headline-card { background: var(--panel-2); border: 1px solid var(--line); border-left: 4px solid var(--accent); border-radius: 8px; padding: 12px 14px; }
+.headline-label { color: var(--muted); font-size: 13px; }
+.headline-value .big { font-size: 40px; font-weight: 800; font-family: var(--mono); }
+.headline-value .unit { font-size: 18px; color: var(--muted); }
+.headline-note { font-size: 12px; color: var(--muted); margin-top: 4px; }
+.totals { display: grid; grid-template-columns: 1fr auto; gap: 6px 12px; margin: 0; }
+.totals dt { color: var(--muted); }
+.totals dd { margin: 0; text-align: right; font-family: var(--mono); }
+.assumption { font-family: var(--font); font-size: 11.5px; color: var(--accent); text-align: left; margin-top: 2px; }
+.small-note { font-size: 12.5px; color: var(--muted); }
+table.checks { width: 100%; border-collapse: collapse; font-size: 13px; }
+table.checks th { text-align: left; color: var(--muted); font-weight: 600; border-bottom: 1px solid var(--line); padding: 4px 4px 6px; }
+table.checks td { border-bottom: 1px solid var(--line); padding: 7px 4px; vertical-align: top; }
+table.checks td.num { font-family: var(--mono); white-space: nowrap; }
+.result { display: inline-flex; align-items: center; gap: 4px; font-weight: 800; font-size: 12px; white-space: nowrap; }
+.result.pass { color: var(--pass); }
+.result.fail { color: var(--fail); }
+.result.unknown { color: var(--muted); }
+.result-icon { font-size: 14px; }
+a.source, span.source { color: var(--muted); font-size: 11px; text-decoration: underline; }
+ol.legs { padding-left: 20px; margin: 0; font-size: 13px; }
+ol.legs li { margin: 3px 0; }
+.profile-wrap { background: var(--panel-2); border: 1px solid var(--line); border-radius: 8px; padding: 6px; }
+svg.profile { width: 100%; height: auto; display: block; cursor: crosshair; }
+svg.profile .axis { fill: var(--muted); font-size: 9px; font-family: var(--mono); }
+.profile-readout { font-size: 12px; color: var(--muted); padding: 4px 2px 0; font-family: var(--mono); }
+
+/* Map legend and route arrows */
+.legend { background: rgba(18, 24, 33, 0.95); border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; font-size: 12px; max-width: 230px; margin-bottom: 40px !important; }
+.legend-block + .legend-block { margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--line); }
+.legend-title { font-weight: 700; margin-bottom: 4px; }
+.legend-row { display: flex; align-items: center; gap: 6px; margin: 2px 0; }
+.legend-swatch { width: 14px; height: 10px; border-radius: 2px; border: 1px solid rgba(0,0,0,0.5); flex: 0 0 auto; }
+.legend-note { color: var(--accent); font-size: 11px; margin-top: 4px; }
+.route-arrow { width: 14px; height: 14px; }
+.leaflet-image-layer { image-rendering: auto; }

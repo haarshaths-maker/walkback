@@ -58,8 +58,9 @@
     });
 
     // Placeholder text until later build steps fill the tabs in.
+    // (plan.js replaces the Plan tab text once the route data loads.)
     var notes = {
-      "tab-plan": "The route, totals and safety checks appear here once the data pipeline has run.",
+      "tab-plan": "Loading the route...",
       "tab-stops": "A card for each science stop, with rover photos, appears here.",
       "tab-conditions": "Weather measured by Curiosity, radiation dose and the solar storm drill appear here.",
       "tab-sources": "Data credits, the sources of every limit, and the limitations of this tool appear here."
@@ -168,10 +169,12 @@
 
     // ---- Controls ----
     // Layer switcher, top right. Base maps are radio buttons; overlays are tick boxes.
-    L.control.layers(baseLayers, { "Stops": stopLayer }, {
+    // Later scripts (plan.js) add their own overlays to this same switcher.
+    WALKBACK.layerControl = L.control.layers(baseLayers, { "Stops": stopLayer }, {
       position: "topright",
       collapsed: window.innerWidth < 800
     }).addTo(map);
+    WALKBACK.stopLayer = stopLayer;
 
     // Scale bar in metres only, bottom left. It uses the Mars radius set above.
     L.control.scale({ position: "bottomleft", metric: true, imperial: false, maxWidth: 160 }).addTo(map);
@@ -218,6 +221,9 @@
     WALKBACK.config = config;
     WALKBACK.stops = stops;
     WALKBACK.map = buildMap(config, stops);
+
+    // Tell the other scripts (plan.js and later) that the map is ready.
+    document.dispatchEvent(new CustomEvent("walkback:ready"));
   }).catch(function (error) {
     console.error(error);
     showMapMessage(

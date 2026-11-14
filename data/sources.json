@@ -1,0 +1,70 @@
+{
+  "xeva_slope": {
+    "citation": "Coan, D. NASA Exploration EVA Integrated HITL Testing and Analogs. NTRS 20210000827. The xEVA suit is designed for walking up, down and across slopes up to 20 deg.",
+    "url": "https://ntrs.nasa.gov/citations/20210000827"
+  },
+  "xeva_range": {
+    "citation": "NASA. Exploration EVA System Concept of Operations Summary, EVA-EXP-0075. Surface traverses of up to 2 km from the lander.",
+    "url": "https://www.nasa.gov/wp-content/uploads/2020/01/topic_1-_eva_lunar_surface_concept_of_operations.pdf"
+  },
+  "xeva_duration": {
+    "citation": "Scoville et al. Artemis III EVA study slides. NTRS 20210026296. Suit minimum 8 h EVA; nominal 6 +/- 2 h; 1 h contingency; walking rate 2 km/h.",
+    "url": "https://ntrs.nasa.gov/api/citations/20210026296/downloads/Scoville%20Final%20presentation%20-%20compressed.pptx.pdf"
+  },
+  "walkback": {
+    "citation": "Vos, Gernhardt and Lee (2007). The Walkback Test. ICES 2007-01-3133. 10 km assumed maximum excursion, from Apollo experience.",
+    "url": "https://core.ac.uk/works/15254764"
+  },
+  "planning": {
+    "citation": "NASA. Planning Lunar EVAs. NTRS 20250006988. Artemis EVA planning constraints and the AEGIS geospatial tool.",
+    "url": "https://ntrs.nasa.gov/api/citations/20250006988/downloads/ASCEND%20presentation%20-%20Planning%20Lunar%20EVAs.pdf"
+  },
+  "rad": {
+    "citation": "Hassler et al. (2014). Mars' Surface Radiation Environment Measured with the Mars Science Laboratory's Curiosity Rover. Science 343, 1244797.",
+    "url": "https://doi.org/10.1126/science.1244797"
+  },
+  "spe": {
+    "citation": "NASA/JPL (10 June 2024). NASA Watches Mars Light Up During Epic Solar Storm.",
+    "url": "https://www.jpl.nasa.gov/news/nasa-watches-mars-light-up-during-epic-solar-storm"
+  },
+  "rems": {
+    "citation": "NASA/JPL-Caltech/CAB (CSIC-INTA). Curiosity REMS weather feed.",
+    "url": "https://mars.nasa.gov/rss/api/?feed=weather&category=msl&feedtype=json"
+  },
+  "dem": {
+    "citation": "Calef III, F.J. and Parker, T. (2016). MSL Gale Merged DEM 1 m v3. PDS Annex, U.S. Geological Survey.",
+    "url": "https://astrogeology.usgs.gov/search/map/mars_msl_gale_merged_dem_1m"
+  },
+  "ortho": {
+    "citation": "Calef III, F.J. and Parker, T. (2016). MSL Gale Merged Orthophoto Mosaic (HiRISE colour). PDS Annex, U.S. Geological Survey.",
+    "url": "https://astrogeology.usgs.gov/search/map/mars_msl_gale_merged_orthophoto_mosaic_25cm"
+  },
+  "rover": {
+    "citation": "NASA/JPL-Caltech. Curiosity (MSL) waypoints and traverse, MMGIS.",
+    "url": "https://mars.nasa.gov/mmgis-maps/MSL/Layers/json/MSL_waypoints.json"
+  },
+  "trek": {
+    "citation": "NASA/JPL-Caltech. Mars Trek WMTS map layers.",
+    "url": "https://trek.nasa.gov/mars/"
+  },
+  "science": {
+    "citation": "NASA (23 Feb 2026). NASA's Curiosity Rover Sees Martian \"Spiderwebs\" Up Close.",
+    "url": "https://www.nasa.gov/missions/mars-science-laboratory/curiosity-rover/NASAs-curiosity-rover-sees-martian-spiderwebs-up-close/"
+  },
+  "latency": {
+    "citation": "NASA. Space Communications: 7 Things You Need to Know. Earth-Mars signal delay 4 to 24 minutes one way.",
+    "url": "https://www.nasa.gov/solar-system/space-communications-7-things-you-need-to-know/"
+  },
+  "ez": {
+    "citation": "Bussey, B. and Hoffman, S. Human Mars Landing Site and Impacts on Mars Surface Operations. NTRS 20150019636.",
+    "url": "https://ntrs.nasa.gov/citations/20150019636"
+  },
+  "tobler": {
+    "citation": "Tobler, W. (1993). Three Presentations on Geographical Analysis and Modeling. NCGIA Technical Report 93-1.",
+    "url": null
+  },
+  "sextant": {
+    "citation": "Johnson et al. (2010). An Integrated Traverse Planner and Analysis Tool for Planetary Exploration (MIT SEXTANT).",
+    "url": "https://dspace.mit.edu/handle/1721.1/81322?show=full"
+  }
+}

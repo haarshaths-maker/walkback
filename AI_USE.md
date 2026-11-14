@@ -12,6 +12,8 @@ This is a running log. Every AI tool that produces something adds a dated line h
 
 - 2026-11-14: Claude Code (Opus 5.5) wrote notebooks/fetch_data.ipynb, which cuts the elevation and colour-image crops and downloads Curiosity's waypoint, traverse and weather files.
 
+- 2026-11-14: Claude Code (Opus 5.5) wrote notebooks/pipeline.py (slope, no-go mask, least-time route, minutes-to-shelter, profile, rover ground-truth check, weather filter, stats and checks), js/plan.js (overlays, legend, route, Curiosity path, Plan tab, elevation profile) and data/sources.json.
+
 ## What the humans do
 
 The team chose the challenge, the site and the science stops, runs the data pipeline, checks numbers against their NASA sources, chooses the photographs and records the demo.
