@@ -331,7 +331,9 @@
 
       // Clicking anywhere on the card (except links and buttons) flies the map to the stop.
       function flyTo() {
-        map.flyTo([stop.lat, stop.lon], Math.max(map.getZoom(), 18));
+        var zoom = Math.max(map.getZoom(), 18);
+        if (WALKBACK.reduceMotion) { map.setView([stop.lat, stop.lon], zoom); }   // jump, no animation
+        else { map.flyTo([stop.lat, stop.lon], zoom); }
         highlightCard(stop.id, false);
       }
       card.addEventListener("click", function (e) {
@@ -351,7 +353,7 @@
       cardsById[id].classList.toggle("is-highlighted", id === stopId);
     });
     if (scroll && cardsById[stopId]) {
-      cardsById[stopId].scrollIntoView({ behavior: "smooth", block: "start" });
+      cardsById[stopId].scrollIntoView({ behavior: WALKBACK.reduceMotion ? "auto" : "smooth", block: "start" });
     }
   }
 

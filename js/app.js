@@ -1,4 +1,4 @@
-// AI-assisted: written with Claude (Fable 5.2), reviewed by the team.
+// AI-assisted: written with Claude (Fable 5.2) and Claude Code (Opus 5.5), reviewed by the team.
 //
 // app.js builds the map and the side panel.
 // Build step T3: base map, Mars Trek layers, stop markers, map furniture, tabs.
@@ -90,8 +90,16 @@
     var b = config.bounds;
     var siteBounds = L.latLngBounds([b.south, b.west], [b.north, b.east]);
 
+    // People who ask their system for reduced motion get a map with no
+    // zoom, fade or fly animations (the view simply jumps).
+    var reduceMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    WALKBACK.reduceMotion = reduceMotion;
+
     var map = L.map("map", {
       crs: marsCRS,
+      zoomAnimation: !reduceMotion,
+      fadeAnimation: !reduceMotion,
+      markerZoomAnimation: !reduceMotion,
       minZoom: WALKBACK.minZoom,
       maxZoom: WALKBACK.maxZoom,
       zoomSnap: 0.25,

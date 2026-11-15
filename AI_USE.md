@@ -22,6 +22,8 @@ This is a running log. Every AI tool that produces something adds a dated line h
 
 - 2026-11-14: Claude Code (Opus 5.5) wrote js/hud.js (helmet HUD: full-screen visor view with six readouts, north-up mini-map, and a walk simulator at 60x walking speed with science-stop pauses, sharing the crew position with the storm drill), added the HUD button to index.html and the T14 styles to css/style.css.
 
+- 2026-11-15: Claude Code (Opus 5.5) did task T15: phone layout (map on top, panel as a bottom sheet with a bottom tab bar, 44 px tap targets, HUD grid for portrait and landscape), accessibility (focus rings, legend and north-arrow labels, reduced-motion support in js/app.js and js/stops.js), and the printable cuff card (js/cuff.js plus print rules in css/style.css).
+
 ## What the humans do
 
 The team chose the challenge, the site and the science stops, runs the data pipeline, checks numbers against their NASA sources, chooses the photographs and records the demo.

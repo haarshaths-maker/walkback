@@ -264,6 +264,17 @@
   // Drawing the readouts
   // ------------------------------------------------------------------
 
+  // Fill a readout's small line. "key" is always shown. "more" is extra
+  // explanation hidden on small screens (CSS class hud-more); "short" replaces
+  // it on small screens (CSS class hud-short) when something must stay, such as
+  // an ASSUMPTION label.
+  function setSub(box, key, more, short) {
+    box.sub.textContent = "";
+    if (key) { box.sub.appendChild(el("span", { class: "hud-key", text: key })); }
+    if (more) { box.sub.appendChild(el("span", { class: "hud-more", text: more })); }
+    if (short) { box.sub.appendChild(el("span", { class: "hud-short", text: short })); }
+  }
+
   function render() {
     if (!ui) { return; }
     var i = crewIndex();
@@ -271,30 +282,33 @@
 
     if (r.home) {
       ui.next.value.textContent = "Haven";
-      ui.next.sub.textContent = "back at the rover";
+      setSub(ui.next, "back at the rover");
     } else {
       ui.next.value.textContent = r.nextName;
-      ui.next.sub.textContent = Math.round(r.toGo) + " m to go";
+      setSub(ui.next, Math.round(r.toGo) + " m to go");
     }
 
     if (r.bearing === null) {
       ui.bearing.value.textContent = "--";
-      ui.bearing.sub.textContent = "end of the route";
+      setSub(ui.bearing, "", "end of the route");
     } else {
       ui.bearing.value.textContent = Math.round(r.bearing) % 360 + "° " + compassLetters(r.bearing);
-      ui.bearing.sub.textContent = "to the route 20 m ahead";
+      setSub(ui.bearing, "", "to the route 20 m ahead");
     }
 
     ui.clock.value.textContent = hmm(r.elapsed);
-    ui.clock.sub.textContent = "dose so far " + r.dose.toFixed(3) + " mSv (ASSUMPTION: " + config.limits.gcr_msv_per_h + " mSv/h)";
+    setSub(ui.clock, "dose so far " + r.dose.toFixed(3) + " mSv",
+      " (ASSUMPTION: " + config.limits.gcr_msv_per_h + " mSv/h)", " (ASSUMPTION)");
 
     var cls = slopeClass(r.slope);
     ui.slope.value.textContent = Math.abs(r.slope).toFixed(1) + "° " + cls.word;
-    ui.slope.sub.textContent = (r.slope >= 0 ? "uphill" : "downhill") + ", steepest in next 10 m";
+    setSub(ui.slope, r.slope >= 0 ? "uphill" : "downhill", ", steepest in next 10 m");
     ui.swatch.style.background = cls.color;
 
-    ui.shelter.value.textContent = r.shelter.toFixed(1) + " min";
-    ui.shelter.sub.textContent = "walk to the haven";
+    // The number is the biggest text on screen; the unit sits beside it in smaller type.
+    ui.shelter.value.textContent = r.shelter.toFixed(1);
+    ui.shelter.value.appendChild(el("span", { class: "hud-unit", text: " min" }));
+    setSub(ui.shelter, "", "walk to the haven");
 
     ui.slider.value = String(i);
     ui.mini.update(samples[i], r.next);

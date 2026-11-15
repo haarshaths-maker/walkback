@@ -94,6 +94,8 @@
       options: { position: "bottomleft" },
       onAdd: function () {
         this._div = L.DomUtil.create("div", "legend");
+        this._div.setAttribute("role", "region");
+        this._div.setAttribute("aria-label", "Map legend");
         L.DomEvent.disableClickPropagation(this._div);
         return this._div;
       },
