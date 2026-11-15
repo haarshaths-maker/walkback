@@ -803,3 +803,4 @@ input:focus-visible,
   .hud-shelter .hud-value { font-size: 40px; }
   .hud-mini-wrap { width: 96px; height: 96px; justify-self: center; }
 }
+.panel-footer a { color: var(--text); }
