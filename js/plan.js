@@ -222,10 +222,10 @@
       ["Walking time", fmtMinutes(stats.walk_time_min), "ASSUMPTION: Tobler hiking speed scaled to 2 km/h on flat ground"],
       ["Science time", fmtMinutes(stats.science_time_min), "ASSUMPTION: planned minutes per stop"],
       ["Total EVA time", fmtMinutes(stats.eva_time_min)],
-      ["Climb / descent", fmtNumber(stats.ascent_m, 0) + " m / " + fmtNumber(stats.descent_m, 0) + " m"],
+      ["Climb / descent", fmtNumber(stats.ascent_m, 1) + " m / " + fmtNumber(stats.descent_m, 1) + " m"],
       ["Steepest slope walked", fmtNumber(stats.max_slope_on_route_deg, 1) + " deg"],
       ["Farthest from shelter", fmtNumber(stats.max_range_from_haven_m, 0) + " m in a straight line"],
-      ["Radiation dose (cosmic rays)", fmtNumber(stats.gcr_dose_msv, 2) + " mSv", "ASSUMPTION: 0.64 mSv per sol spread evenly over the day"]
+      ["Radiation dose (cosmic rays)", fmtNumber(stats.gcr_dose_msv, 3) + " mSv", "ASSUMPTION: 0.64 mSv per sol spread evenly over the day"]
     ];
     var dl = el("dl", { class: "totals" });
     totals.forEach(function (t) {

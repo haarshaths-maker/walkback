@@ -804,3 +804,18 @@ input:focus-visible,
   .hud-mini-wrap { width: 96px; height: 96px; justify-self: center; }
 }
 .panel-footer a { color: var(--text); }
+
+/* ---------------- SPEC section 9: body text at least 15 px (T17 QA) ---------------- */
+/* Reading text in the panel is 15 px. Short captions (ASSUMPTION tags, photo credits,
+   legends, chart axes, the footer) stay smaller because they are labels, not body text. */
+.small-note, .source-list, ol.legs, table.checks, .stop-objective, .stop-finding,
+.viewer-meta, .drill-position, .sol-date { font-size: 15px; }
+table.checks th, table.checks td { padding-left: 3px; padding-right: 3px; }
+.assumption { font-size: 12.5px; }
+/* Checks table must fit the 360 px panel: let numbers wrap, keep the PASS/FAIL word whole. */
+table.checks { table-layout: fixed; }
+table.checks th:nth-child(1) { width: 38%; }
+table.checks th:nth-child(4) { width: 23%; }
+table.checks td.num { white-space: normal; overflow-wrap: anywhere; }
+table.checks td, table.checks th { overflow-wrap: anywhere; }
+table.checks .result { white-space: nowrap; font-size: 13px; }
