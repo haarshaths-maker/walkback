@@ -170,7 +170,7 @@
     bgImg.addEventListener("error", function () { bgImg.hidden = true; });
 
     var alert = el("div", { class: "hud-alert", role: "alert", hidden: "" }, [
-      el("span", { "aria-hidden": "true", text: "⚠ " }),
+      WALKBACK.icon("alert"),
       "ALERT: SOLAR STORM DRILL. Stop science, walk to the haven."
     ]);
 
@@ -191,7 +191,7 @@
     var slider = el("input", { type: "range", class: "hud-slider", min: "0", max: String(samples.length - 1), step: "1",
       "aria-label": "Crew position along the route" });
     var playBtn = el("button", { class: "hud-btn", type: "button", text: "Play" });
-    var closeBtn = el("button", { class: "hud-btn hud-close", type: "button", "aria-label": "Close HUD and return to the map", text: "Close ✕" });
+    var closeBtn = el("button", { class: "hud-btn hud-close", type: "button", "aria-label": "Close HUD and return to the map", text: "Close" });
 
     var root = el("div", { class: "hud", role: "dialog", "aria-modal": "true", "aria-label": "Helmet HUD", hidden: "" }, [
       bgImg,

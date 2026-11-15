@@ -15,8 +15,9 @@ Student project. Not affiliated with or endorsed by NASA.
 - **Plan:** the route, minutes to shelter, totals (distance, time, climb, dose), five pass/fail safety checks with sources, a ground-truth check against Curiosity's real path, the legs, an elevation profile, and a printable one-page cuff card.
 - **Stops:** one card per stop with a NASA rover photo, the objective, what Curiosity found there, planned science time and arrival time.
 - **Conditions:** weather Curiosity measured here (a replay, not a forecast), the EVA daylight window, radiation, and the solar storm drill.
-- **Sources:** where every limit comes from, data credits, limitations, and how AI was used.
-- **HUD:** a full-screen helmet view with six readouts and a walk simulator.
+- **Sources:** where every limit comes from, data credits, how we checked the data against NASA's own files, earlier work we built on, limitations, and how AI was used.
+- **Welcome screen:** what the project is and how to explore it (reopen it with **About**).
+- **Helmet view (HUD):** a full-screen helmet view with six readouts and a walk simulator.
 
 ## Run it on your own computer
 

@@ -126,7 +126,7 @@
     var img = el("img", { class: "viewer-img", alt: "" });
     var caption = el("div", { class: "viewer-caption" });
     var counter = el("div", { class: "viewer-counter" });
-    var closeBtn = el("button", { class: "viewer-btn viewer-close", type: "button", "aria-label": "Close photo viewer", text: "Close ✕" });
+    var closeBtn = el("button", { class: "viewer-btn viewer-close", type: "button", "aria-label": "Close photo viewer", text: "Close" });
     var prevBtn = el("button", { class: "viewer-btn viewer-prev", type: "button", "aria-label": "Previous photo of this stop", text: "‹ Previous" });
     var nextBtn = el("button", { class: "viewer-btn viewer-next", type: "button", "aria-label": "Next photo of this stop", text: "Next ›" });
     var box = el("div", { class: "viewer", role: "dialog", "aria-modal": "true", "aria-label": "Photo viewer", hidden: "" }, [
@@ -327,6 +327,10 @@
       var flyBtn = el("button", { class: "stop-fly", type: "button", text: "Show on map" });
       actions.appendChild(flyBtn);
       actions.appendChild(link(stop.source_url, "NASA source"));
+      // Some findings (the X-ray mineral results) are reported on a different NASA page.
+      if (stop.finding_source_url && stop.finding_source_url !== stop.source_url) {
+        actions.appendChild(link(stop.finding_source_url, "Mineral results"));
+      }
       card.appendChild(actions);
 
       // Clicking anywhere on the card (except links and buttons) flies the map to the stop.
@@ -422,6 +426,31 @@
     tab.appendChild(data);
     tab.appendChild(el("p", { class: "small-note",
       text: "Photos: NASA images, each credited on its stop card and in the photo viewer." }));
+
+    // How we checked the data (filled in from data/verification.json once it loads)
+    var checked = el("div", { class: "verify-block" });
+    tab.appendChild(checked);
+    loadJson("data/verification.json").then(function (v) {
+      checked.appendChild(el("h3", { text: "How we checked the data" }));
+      checked.appendChild(el("p", { class: "small-note", text: v.method + " Last checked " + v.checked_date + "." }));
+      var list = el("ul", { class: "source-list verify-list" });
+      v.checks.forEach(function (c) {
+        var li = el("li", {}, [el("strong", { text: c.what + ". " }), c.result + " "]);
+        var s = sources[c.source];
+        if (s && s.url) { li.appendChild(link(s.url, "source")); }
+        list.appendChild(li);
+      });
+      checked.appendChild(list);
+    }).catch(function (err) { console.warn("WALKBACK: verification list unavailable. " + err.message); });
+
+    // Built on earlier work (the method is not new; credit where it comes from)
+    tab.appendChild(el("h3", { text: "Built on earlier work" }));
+    var prior = el("ul", { class: "source-list" });
+    ["sextant", "planning", "tobler"].forEach(function (id) {
+      var li = sourceLine(sources, id);
+      if (li) { prior.appendChild(li); }
+    });
+    tab.appendChild(prior);
 
     // (c) Limitations (SPEC section 11, word for word)
     tab.appendChild(el("h3", { text: "Limitations" }));

@@ -76,7 +76,7 @@
   function resultBadge(pass) {
     var unknown = pass === null || pass === undefined;
     return el("span", { class: "result " + (unknown ? "unknown" : pass ? "pass" : "fail") }, [
-      el("span", { class: "result-icon", "aria-hidden": "true", text: unknown ? "?" : pass ? "✓" : "✕" }),
+      WALKBACK.icon(unknown ? "info" : pass ? "check" : "cross"),
       unknown ? "NO DATA" : pass ? "PASS" : "FAIL"
     ]);
   }
@@ -338,7 +338,7 @@
   function buildBanner() {
     var box = el("div", { class: "storm-banner", role: "alert", hidden: "" }, [
       el("div", { class: "storm-title" }, [
-        el("span", { "aria-hidden": "true", text: "⚠ " }),
+        WALKBACK.icon("alert"),
         "ALERT: " + spe.name + " (drill)"
       ]),
       el("div", { text: spe.note }),

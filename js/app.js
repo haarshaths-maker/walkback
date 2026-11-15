@@ -180,7 +180,7 @@
     // Later scripts (plan.js) add their own overlays to this same switcher.
     WALKBACK.layerControl = L.control.layers(baseLayers, { "Stops": stopLayer }, {
       position: "topright",
-      collapsed: window.innerWidth < 800
+      collapsed: true   // the view buttons above the map cover the common cases; this holds every layer
     }).addTo(map);
     WALKBACK.stopLayer = stopLayer;
 

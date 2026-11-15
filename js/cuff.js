@@ -107,12 +107,15 @@
   // Add the button to the top of the Plan tab once the plan exists.
   document.addEventListener("walkback:plan-ready", function () {
     var tab = document.getElementById("tab-plan");
-    var button = el("button", { class: "stop-fly cuff-btn", type: "button", text: "Print cuff card" });
+    var button = el("button", { class: "btn cuff-btn", type: "button" }, [WALKBACK.icon("print"), "Print cuff card"]);
     button.addEventListener("click", function () {
       buildCard();
       window.print();
     });
-    tab.insertBefore(el("div", { class: "cuff-row" }, [button]), tab.firstChild);
+    // plan.js makes an actions row under the key numbers; fall back to the top of the tab.
+    var slot = document.getElementById("plan-actions");
+    if (slot) { slot.appendChild(button); }
+    else { tab.insertBefore(el("div", { class: "cuff-row" }, [button]), tab.firstChild); }
     // Also fill the card if someone prints with Ctrl+P / Cmd+P.
     window.addEventListener("beforeprint", buildCard);
   });

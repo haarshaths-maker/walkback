@@ -43,7 +43,7 @@ Format: Author or agency (year). Title. Source. URL.
 
 ## Images
 
-Shown on the stop cards and in the HUD. The team could not download them into /img yet, so the site loads each one from its NASA link (the "remote_url" field in data/images.json).
+Shown on the stop cards, in the HUD and on the welcome screen. Downloaded from NASA into /img on 15 Nov 2026 and resized (at most 1600 px wide; img6 1000 px wide); nothing else was changed.
 
 - img1: Nevado Sajama drill workspace on the ridge, Left Navcam, sol 4709. NASA/JPL-Caltech. https://science.nasa.gov/blog/curiosity-blog-sols-4709-4715-drilling-high-and-low-in-the-boxwork-unit
 - img2: Nevado Sajama drill hole, Left Navcam, sol 4718. NASA/JPL-Caltech. https://science.nasa.gov/solar-system/curiosity-blog-sols-4716-4722-drilling-success-at-nevado-sajama
@@ -52,11 +52,12 @@ Shown on the stop cards and in the HUD. The team could not download them into /i
 - img5: Pea-size nodules on the boxwork (PIA26697). NASA/JPL-Caltech/MSSS. https://www.nasa.gov/missions/mars-science-laboratory/curiosity-rover/NASAs-curiosity-rover-sees-martian-spiderwebs-up-close/
 - img6: Low fractured boxwork ridge (PIA26558). NASA/JPL-Caltech/MSSS. https://www.nasa.gov/?p=879744
 - img7: Boxwork region seen from a distance (PIA26560). NASA/JPL-Caltech/MSSS. https://www.nasa.gov/?p=879744
-- img8: Boxwork "spiderweb" pattern from orbit (PIA26306), HiRISE. NASA/JPL-Caltech/Univ. of Arizona. https://images.nasa.gov/details/PIA26306 (not used yet: its direct JPG link could not be confirmed)
+- img8: HiRISE Views Mount Sharp's Boxwork (PIA26306), captured 10 Dec 2006, welcome-screen background. NASA/JPL-Caltech/Univ. of Arizona. https://images.nasa.gov/details/PIA26306 (NASA's caption describes these as ridges similar to the ones Curiosity studied; it does not place them inside our site, and neither do we.)
 
 ## Software and tools
 
 - Leaflet 1.9.4. Open-source map library. https://leafletjs.com/
+- IBM Plex Sans and IBM Plex Mono typefaces (IBM, SIL Open Font License), served by Fontsource via unpkg. https://github.com/IBM/plex
 - rasterio. Python library for geospatial rasters. https://rasterio.readthedocs.io/
 - GDAL. Geospatial Data Abstraction Library (used through rasterio). https://gdal.org/
 - NumPy. https://numpy.org/

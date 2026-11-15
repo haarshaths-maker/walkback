@@ -1,8 +1,14 @@
 // AI-assisted: written with Claude Code (Opus 5.5), reviewed by the team.
 //
 // plan.js draws the computed data on the map and fills the Plan tab.
-// Build step T7. It waits for app.js to finish building the map
-// ("walkback:ready"), then loads the files that notebooks/pipeline.py wrote.
+// It waits for app.js to finish building the map ("walkback:ready"),
+// then loads the files that notebooks/pipeline.py wrote.
+//
+// The Plan tab reads top to bottom like a briefing:
+//   1. the verdict (do all safety checks pass?)
+//   2. four key numbers, led by minutes to shelter
+//   3. foldable details: checks, elevation profile, legs, time and dose, ground truth
+// Above the map, a row of buttons switches between the main map views.
 
 (function () {
   "use strict";
@@ -60,18 +66,37 @@
     return el("a", { class: "source", href: s.url, target: "_blank", rel: "noopener", title: s.citation, text: "source" });
   }
 
+  // PASS / FAIL as a word plus an icon (never colour alone).
+  function resultBadge(pass) {
+    var unknown = pass === null || pass === undefined;
+    var badge = el("span", { class: "result " + (unknown ? "unknown" : pass ? "pass" : "fail") });
+    badge.appendChild(WALKBACK.icon(unknown ? "info" : pass ? "check" : "cross"));
+    badge.appendChild(document.createTextNode(unknown ? "NO DATA" : pass ? "PASS" : "FAIL"));
+    return badge;
+  }
+
+  // A foldable section: <details><summary>title</summary> ...content</details>
+  function section(title, open, children) {
+    var d = el("details", { class: "fold" }, [el("summary", { text: title })]);
+    if (open) { d.open = true; }
+    var body = el("div", { class: "fold-body" }, children);
+    d.appendChild(body);
+    return d;
+  }
+
   // ------------------------------------------------------------------
   // Map layers
   // ------------------------------------------------------------------
 
+  var LAYER_NAMES = {
+    ortho: "Colour image of the site (HiRISE, USGS)",
+    hillshade: "Terrain shading (1 m elevation model)",
+    slope: "Slope",
+    walkback: "Minutes to shelter"
+  };
+
   function addOverlays(map, overlays) {
     var layers = {};
-    var names = {
-      ortho: "Colour image crop (USGS HiRISE colour)",
-      hillshade: "Terrain shading (1 m elevation model)",
-      slope: "Slope (deg)",
-      walkback: "Minutes to shelter"
-    };
     ["ortho", "hillshade", "slope", "walkback"].forEach(function (key) {
       var o = overlays[key];
       if (!o) { return; }
@@ -82,9 +107,8 @@
       });
       layer.walkbackKey = key;
       layers[key] = layer;
-      WALKBACK.layerControl.addOverlay(layer, names[key]);
+      WALKBACK.layerControl.addOverlay(layer, LAYER_NAMES[key]);
     });
-    if (layers.slope) { layers.slope.addTo(map); }
     return layers;
   }
 
@@ -103,7 +127,7 @@
         var div = this._div;
         div.innerHTML = "";
         var any = false;
-        [["slope", "Slope"], ["walkback", "Minutes to shelter"], ["hillshade", "Terrain shading"], ["ortho", "Colour image"]]
+        [["slope", "Slope"], ["walkback", "Walking minutes back to the rover"], ["hillshade", "Terrain shading"], ["ortho", "Colour image"]]
           .forEach(function (pair) {
             var key = pair[0];
             if (!layers[key] || !map.hasLayer(layers[key])) { return; }
@@ -151,7 +175,6 @@
 
   function addRoute(map, route) {
     var group = L.layerGroup();
-    var legLines = [];
     route.features.forEach(function (f) {
       var latlngs = f.geometry.coordinates.map(function (c) { return [c[1], c[0]]; });
       var p = f.properties;
@@ -159,7 +182,7 @@
       L.polyline(latlngs, { color: "#0b0f14", weight: 8, opacity: 0.9, interactive: false }).addTo(group);
       var line = L.polyline(latlngs, { color: "#ffffff", weight: 4, opacity: 1 }).addTo(group);
       line.bindTooltip(
-        "Leg " + p.leg + ": " + p.from + " to " + p.to + "<br>" +
+        "<strong>Leg " + p.leg + ": " + p.from + " to " + p.to + "</strong><br>" +
         fmtNumber(p.distance_m, 0) + " m, " + fmtNumber(p.walk_min, 1) + " min walking<br>" +
         "climb " + fmtNumber(p.ascent_m, 1) + " m, descent " + fmtNumber(p.descent_m, 1) + " m<br>" +
         "steepest " + fmtNumber(p.max_slope_deg, 1) + " deg",
@@ -167,7 +190,6 @@
       );
       line.on("mouseover", function () { line.setStyle({ color: "#ffb000", weight: 6 }); });
       line.on("mouseout", function () { line.setStyle({ color: "#ffffff", weight: 4 }); });
-      legLines.push(line);
 
       // One direction arrow at the middle of each leg.
       var coords = f.geometry.coordinates;
@@ -197,33 +219,150 @@
   }
 
   // ------------------------------------------------------------------
+  // Map view buttons (above the map)
+  // ------------------------------------------------------------------
+  // One data layer at a time keeps the map readable. The layer switcher
+  // (top right) still allows any combination.
+
+  var VIEWS = [
+    { id: "route", label: "Route", layer: null, hint: "Satellite image with the planned route" },
+    { id: "slope", label: "Slope", layer: "slope", hint: "How steep every square metre is; red is too steep to walk" },
+    { id: "walkback", label: "Minutes to shelter", short: "Shelter", layer: "walkback", hint: "Walking minutes back to the rover from any point" },
+    { id: "ortho", label: "Colour", layer: "ortho", hint: "HiRISE colour image of the site" }
+  ];
+
+  function addViewButtons(map, layers) {
+    var bar = el("div", { class: "view-bar", role: "group", "aria-label": "Map view" });
+    var buttons = {};
+    VIEWS.forEach(function (v) {
+      if (v.layer && !layers[v.layer]) { return; }
+      // A shorter label is shown on phones (CSS hides one of the two).
+      var b = el("button", { type: "button", class: "view-btn", "aria-pressed": "false", title: v.hint, "aria-label": v.label }, [
+        el("span", { class: "lbl-full", text: v.label }),
+        el("span", { class: "lbl-short", text: v.short || v.label })
+      ]);
+      b.addEventListener("click", function () { setView(v.id); });
+      buttons[v.id] = b;
+      bar.appendChild(b);
+    });
+    document.querySelector(".map-wrap").appendChild(bar);
+
+    // Show exactly one data layer (or none for "route").
+    function setView(id) {
+      VIEWS.forEach(function (v) {
+        if (!v.layer || !layers[v.layer]) { return; }
+        var want = v.id === id;
+        if (want && !map.hasLayer(layers[v.layer])) { map.addLayer(layers[v.layer]); }
+        if (!want && map.hasLayer(layers[v.layer])) { map.removeLayer(layers[v.layer]); }
+      });
+      // Leaflet only fires overlayadd/overlayremove from its own switcher, so tell the legend.
+      map.fire("overlayadd");
+      syncButtons();
+    }
+
+    // Keep the buttons in step if someone uses the layer switcher instead.
+    function syncButtons() {
+      var active = "route";
+      VIEWS.forEach(function (v) { if (v.layer && layers[v.layer] && map.hasLayer(layers[v.layer])) { active = v.id; } });
+      Object.keys(buttons).forEach(function (id) {
+        buttons[id].setAttribute("aria-pressed", id === active ? "true" : "false");
+        buttons[id].classList.toggle("is-active", id === active);
+      });
+    }
+    map.on("overlayadd overlayremove", syncButtons);
+
+    WALKBACK.setMapView = setView;
+    setView("slope");   // start on the slope view: it shows why the route goes where it goes
+  }
+
+  // ------------------------------------------------------------------
   // Plan tab
   // ------------------------------------------------------------------
 
   function buildPlanTab(stats, route, profile, sources, map) {
     var tab = document.getElementById("tab-plan");
     tab.innerHTML = "";
-    var config = WALKBACK.config;
 
-    // (a) Headline
-    tab.appendChild(el("div", { class: "headline-card" }, [
-      el("div", { class: "headline-label", text: "Longest walk back to shelter" }),
-      el("div", { class: "headline-value" }, [
-        el("span", { class: "big", text: fmtNumber(stats.max_time_to_haven_min, 1) }),
-        el("span", { class: "unit", text: " min" })
-      ]),
-      el("div", { class: "headline-note",
-        text: "From the farthest point of the route back to the pressurised rover. ASSUMPTION: every slope is walked as if uphill, so this is a cautious figure." })
+    // (1) Verdict
+    var total = stats.checks.length;
+    var passed = stats.checks.filter(function (c) { return c.pass === true; }).length;
+    var allPass = passed === total;
+    var verdict = el("div", { class: "verdict " + (allPass ? "is-pass" : "is-fail") });
+    verdict.appendChild(WALKBACK.icon(allPass ? "check" : "alert"));
+    verdict.appendChild(el("div", {}, [
+      el("div", { class: "verdict-title", text: allPass ? "All " + total + " safety checks pass" : (total - passed) + " of " + total + " safety checks fail" }),
+      el("div", { class: "verdict-sub", text: "A loop from the parked rover through five of Curiosity's drill and imaging sites, and back." })
     ]));
+    tab.appendChild(verdict);
 
-    // (b) Totals
+    // (2) Key numbers
+    var shelterTile = el("div", { class: "kpi kpi-hero" }, [
+      el("div", { class: "kpi-label", text: "Longest walk back to shelter" }),
+      el("div", { class: "kpi-value" }, [fmtNumber(stats.max_time_to_haven_min, 1), el("span", { class: "kpi-unit", text: " min" })]),
+      el("div", { class: "kpi-note", text: "From the farthest point of the route back to the pressurised rover. Limit 60 min." }),
+      el("div", { class: "assumption", text: "ASSUMPTION: every slope is walked as if uphill, so this is a cautious figure." })
+    ]);
+    var kpis = el("div", { class: "kpis" }, [
+      shelterTile,
+      el("div", { class: "kpi" }, [el("div", { class: "kpi-label", text: "Route" }),
+        el("div", { class: "kpi-value" }, [fmtNumber(stats.total_distance_m / 1000, 2), el("span", { class: "kpi-unit", text: " km" })])]),
+      el("div", { class: "kpi" }, [el("div", { class: "kpi-label", text: "EVA time" }),
+        el("div", { class: "kpi-value", text: fmtMinutes(stats.eva_time_min) })]),
+      el("div", { class: "kpi" }, [el("div", { class: "kpi-label", text: "Max slope" }),
+        el("div", { class: "kpi-value" }, [fmtNumber(stats.max_slope_on_route_deg, 1), el("span", { class: "kpi-unit", text: " deg" })])])
+    ]);
+    tab.appendChild(kpis);
+
+    // Actions: show the signature layer; cuff.js adds the print button here too.
+    var actions = el("div", { class: "plan-actions", id: "plan-actions" });
+    var showShelter = el("button", { type: "button", class: "btn btn-primary", text: "Show minutes to shelter on the map" });
+    showShelter.addEventListener("click", function () { if (WALKBACK.setMapView) { WALKBACK.setMapView("walkback"); } });
+    actions.appendChild(showShelter);
+    tab.appendChild(actions);
+
+    // (3) Safety checks
+    var table = el("table", { class: "checks" }, [
+      el("thead", {}, [el("tr", {}, [
+        el("th", { text: "Check" }), el("th", { text: "Plan" }), el("th", { text: "Limit" }), el("th", { text: "Result" })
+      ])])
+    ]);
+    var tbody = el("tbody");
+    stats.checks.forEach(function (c) {
+      var value = typeof c.value === "number" ? fmtNumber(c.value, c.unit === "m" ? 0 : (c.unit === "h" ? 2 : 1)) + " " + c.unit : (c.value || "no data");
+      var limit = typeof c.limit === "number" ? "max " + fmtNumber(c.limit, 0) + " " + c.unit : (c.limit || "");
+      var labelCell = el("td", {}, [c.label + " ", sourceLink(sources, c.source)]);
+      if (c.assumption) { labelCell.appendChild(el("div", { class: "assumption", text: "ASSUMPTION: " + c.assumption })); }
+      if (c.note) { labelCell.appendChild(el("div", { class: "cell-note", text: c.note })); }
+      if (c.flag) { labelCell.appendChild(el("div", { class: "cell-note", text: "Note: " + c.flag })); }
+      if (c.id === "daylight") {
+        labelCell.appendChild(el("div", { class: "assumption",
+          text: "ASSUMPTION: start 2 h after sunrise, back 2 h before sunset, on sol " + c.sol + "." }));
+      }
+      tbody.appendChild(el("tr", {}, [labelCell, el("td", { class: "num", text: value }), el("td", { class: "num", text: limit }), el("td", {}, [resultBadge(c.pass)])]));
+    });
+    table.appendChild(tbody);
+    tab.appendChild(section("Safety checks", true, [table]));
+
+    // (4) Elevation profile
+    tab.appendChild(section("Elevation profile", true, [buildProfile(profile, map)]));
+
+    // (5) Legs
+    var ol = el("ol", { class: "legs" });
+    route.features.forEach(function (f) {
+      var p = f.properties;
+      ol.appendChild(el("li", {}, [
+        el("strong", { text: p.from + " → " + p.to }),
+        el("span", { text: " " + fmtNumber(p.distance_m, 0) + " m, " + fmtNumber(p.walk_min, 1) + " min, steepest " + fmtNumber(p.max_slope_deg, 1) + " deg" })
+      ]));
+    });
+    tab.appendChild(section("Route legs", false, [ol]));
+
+    // (6) Time, climb and dose
     var totals = [
-      ["Route length", fmtNumber(stats.total_distance_m / 1000, 2) + " km"],
       ["Walking time", fmtMinutes(stats.walk_time_min), "ASSUMPTION: Tobler hiking speed scaled to 2 km/h on flat ground"],
       ["Science time", fmtMinutes(stats.science_time_min), "ASSUMPTION: planned minutes per stop"],
       ["Total EVA time", fmtMinutes(stats.eva_time_min)],
       ["Climb / descent", fmtNumber(stats.ascent_m, 1) + " m / " + fmtNumber(stats.descent_m, 1) + " m"],
-      ["Steepest slope walked", fmtNumber(stats.max_slope_on_route_deg, 1) + " deg"],
       ["Farthest from shelter", fmtNumber(stats.max_range_from_haven_m, 0) + " m in a straight line"],
       ["Radiation dose (cosmic rays)", fmtNumber(stats.gcr_dose_msv, 3) + " mSv", "ASSUMPTION: 0.64 mSv per sol spread evenly over the day"]
     ];
@@ -234,70 +373,26 @@
       if (t[2]) { dd.appendChild(el("div", { class: "assumption", text: t[2] })); }
       dl.appendChild(dd);
     });
-    tab.appendChild(el("h3", { text: "This EVA" }));
-    tab.appendChild(dl);
-    tab.appendChild(el("p", { class: "small-note",
-      text: "Cosmic-ray dose builds up indoors and outdoors alike, so one walk adds little. What the walk changes is exposure during a solar storm, which is why the headline is minutes to shelter." }));
+    tab.appendChild(section("Time, climb and dose", false, [
+      dl,
+      el("p", { class: "small-note",
+        text: "Cosmic-ray dose builds up indoors and outdoors alike, so one walk adds little. What the walk changes is exposure during a solar storm, which is why the headline is minutes to shelter." })
+    ]));
 
-    // (c) Checks
-    tab.appendChild(el("h3", { text: "Safety checks" }));
-    var table = el("table", { class: "checks" }, [
-      el("thead", {}, [el("tr", {}, [
-        el("th", { text: "Check" }), el("th", { text: "Plan" }), el("th", { text: "Limit" }), el("th", { text: "Result" })
-      ])])
-    ]);
-    var tbody = el("tbody");
-    stats.checks.forEach(function (c) {
-      var value = typeof c.value === "number" ? fmtNumber(c.value, c.unit === "m" ? 0 : (c.unit === "h" ? 2 : 1)) + " " + c.unit : (c.value || "no data");
-      var limit = typeof c.limit === "number" ? "max " + fmtNumber(c.limit, 0) + " " + c.unit : (c.limit || "");
-      var ok = c.pass === true, unknown = c.pass === null || c.pass === undefined;
-      var result = el("span", { class: "result " + (unknown ? "unknown" : ok ? "pass" : "fail") }, [
-        el("span", { class: "result-icon", "aria-hidden": "true", text: unknown ? "?" : ok ? "✓" : "✕" }),
-        unknown ? "NO DATA" : ok ? "PASS" : "FAIL"
-      ]);
-      var labelCell = el("td", {}, [c.label + " ", sourceLink(sources, c.source)]);
-      if (c.assumption) { labelCell.appendChild(el("div", { class: "assumption", text: "ASSUMPTION: " + c.assumption })); }
-      if (c.note) { labelCell.appendChild(el("div", { class: "assumption", text: c.note })); }
-      if (c.flag) { labelCell.appendChild(el("div", { class: "assumption", text: "Flag: " + c.flag })); }
-      if (c.id === "daylight") {
-        labelCell.appendChild(el("div", { class: "assumption",
-          text: "ASSUMPTION: start 2 h after sunrise, back 2 h before sunset, on sol " + c.sol + "." }));
-      }
-      tbody.appendChild(el("tr", {}, [labelCell, el("td", { class: "num", text: value }), el("td", { class: "num", text: limit }), el("td", {}, [result])]));
-    });
-    table.appendChild(tbody);
-    tab.appendChild(table);
-
-    // (d) Ground truth
+    // (7) Ground truth
     var rc = stats.rover_check || {};
     if (rc.max_slope_on_rover_path_deg !== null && rc.max_slope_on_rover_path_deg !== undefined) {
-      tab.appendChild(el("h3", { text: "Ground-truth check" }));
-      tab.appendChild(el("p", {}, [
+      var gt = [el("p", {}, [
         "Curiosity's real path across this site, laid over our slope map: " +
         fmtNumber(rc.pct_rover_path_under_20deg, 1) + "% of it lies on ground under 20 deg. Median slope " +
         fmtNumber(rc.median_slope_on_rover_path_deg, 1) + " deg, 95th percentile " +
         fmtNumber(rc.p95_slope_on_rover_path_deg, 1) + " deg, steepest single reading " +
         fmtNumber(rc.max_slope_on_rover_path_deg, 1) + " deg. ",
         sourceLink(sources, "rover")
-      ]));
-      if (rc.note) { tab.appendChild(el("p", { class: "small-note", text: rc.note })); }
+      ])];
+      if (rc.note) { gt.push(el("p", { class: "small-note", text: rc.note })); }
+      tab.appendChild(section("Ground-truth check against Curiosity", false, gt));
     }
-
-    // (e) Legs
-    tab.appendChild(el("h3", { text: "Legs" }));
-    var ol = el("ol", { class: "legs" });
-    route.features.forEach(function (f) {
-      var p = f.properties;
-      ol.appendChild(el("li", {}, [
-        el("strong", { text: p.from + " → " + p.to }),
-        el("span", { text: " " + fmtNumber(p.distance_m, 0) + " m, " + fmtNumber(p.walk_min, 1) + " min, steepest " + fmtNumber(p.max_slope_deg, 1) + " deg" })
-      ]));
-    });
-    tab.appendChild(ol);
-
-    // (f) Elevation profile
-    tab.appendChild(el("h3", { text: "Elevation profile" }));
-    tab.appendChild(buildProfile(profile, map));
   }
 
   // Elevation profile drawn as inline SVG (no chart library).
@@ -358,7 +453,7 @@
     // Hover: a dot on the profile and on the map
     var dot = add("circle", { r: 3.5, fill: "#ffffff", stroke: "#0b0f14", cx: -10, cy: -10 });
     var mapDot = L.circleMarker([0, 0], { radius: 6, color: "#0b0f14", weight: 2, fillColor: "#ffffff", fillOpacity: 1, interactive: false });
-    var readout = el("div", { class: "profile-readout", text: "Move along the profile to follow the route on the map." });
+    var readout = el("div", { class: "profile-readout", text: "H = rover (haven), 1-5 = stops. Move along the profile to follow the route on the map." });
 
     function onMove(evt) {
       var rect = svg.getBoundingClientRect();
@@ -422,9 +517,11 @@
       WALKBACK.stats = stats;
       WALKBACK.sources = sources;
       var layers = addOverlays(map, overlays);
+      WALKBACK.overlayLayers = layers;
       addLegend(map, overlays, layers);
       addCuriosity(map, curiosity);
       addRoute(map, route);
+      addViewButtons(map, layers);
       buildPlanTab(stats, route, profile, sources, map);
       addClickPopup(map);
       document.dispatchEvent(new CustomEvent("walkback:plan-ready"));

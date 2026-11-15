@@ -1,0 +1,41 @@
+{
+  "checked_date": "2026-11-15",
+  "method": "Each item was re-checked by downloading the NASA source directly and comparing it with the files this site uses.",
+  "checks": [
+    {
+      "what": "Stop positions",
+      "result": "All six stop positions match NASA's Curiosity waypoint file exactly (0.0 m apart), and so do their elevations.",
+      "source": "rover"
+    },
+    {
+      "what": "Drill sites",
+      "result": "The waypoint file shows Curiosity stayed parked at the S1, S3 and S4 positions through the days it drilled Altadena (8 June 2025), Valle de la Luna (18-19 October 2025) and Nevado Sajama (sol 4718), so those stops are the real drill parking spots.",
+      "source": "rover"
+    },
+    {
+      "what": "Weather replay",
+      "result": "All 318 sols in our weather file (sols 4534 to 4860) match the live REMS feed, value for value.",
+      "source": "rems"
+    },
+    {
+      "what": "20 deg slope limit",
+      "result": "Quoted in the NTRS 20210000827 slides as \"Walking up/down/across a slope of up to 20°\".",
+      "source": "xeva_slope"
+    },
+    {
+      "what": "What Curiosity found",
+      "result": "Each stop's finding was compared with its NASA page. The clay (ridge) and carbonate (hollow) results are reported in NASA's 23 February 2026 release, which is linked on those two stop cards.",
+      "source": "science"
+    },
+    {
+      "what": "Radio delay",
+      "result": "NASA gives 4 to 24 minutes one way between Earth and Mars.",
+      "source": "latency"
+    },
+    {
+      "what": "Map tiles",
+      "result": "The Mars Trek HiRISE test tile for this site loads (HTTP 200) with the URL pattern in our specification.",
+      "source": "trek"
+    }
+  ]
+}

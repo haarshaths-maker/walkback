@@ -61,7 +61,8 @@
     "source_url": "https://science.nasa.gov/blog/curiosity-blog-sols-4689-4694-drill-in-the-boxwork-unit-is-go/",
     "images": [
       "img3"
-    ]
+    ],
+    "finding_source_url": "https://www.nasa.gov/missions/mars-science-laboratory/curiosity-rover/NASAs-curiosity-rover-sees-martian-spiderwebs-up-close/"
   },
   {
     "id": "S4",
@@ -78,7 +79,8 @@
     "images": [
       "img1",
       "img2"
-    ]
+    ],
+    "finding_source_url": "https://www.nasa.gov/missions/mars-science-laboratory/curiosity-rover/NASAs-curiosity-rover-sees-martian-spiderwebs-up-close/"
   },
   {
     "id": "S5",
