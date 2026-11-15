@@ -6,7 +6,7 @@ WALKBACK is a web map that plans one real Marswalk (EVA) at the Mount Sharp boxw
 
 - **Live site:** https://haarshaths-maker.github.io/walkback/
 - **Challenge:** 2026 NASA Space Apps Challenge, "Interplanetary Survival Guide: Martian Map"
-- **Team:** (team name to be added)
+- **Team:** Astrophoenix
 
 Student project. Not affiliated with or endorsed by NASA.
 
