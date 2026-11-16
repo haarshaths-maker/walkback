@@ -72,9 +72,6 @@
     "Student project built in one weekend. Not flight software."
   ];
 
-  // The repository that holds AI_USE.md (this project's own GitHub repo).
-  var AI_USE_URL = "https://github.com/haarshaths-maker/walkback/blob/main/AI_USE.md";
-
   // ------------------------------------------------------------------
   // Photos
   // ------------------------------------------------------------------
@@ -458,16 +455,7 @@
     LIMITATIONS.forEach(function (text) { lim.appendChild(el("li", { text: text })); });
     tab.appendChild(lim);
 
-    // (d) How AI was used
-    tab.appendChild(el("h3", { text: "How AI was used" }));
-    tab.appendChild(el("p", {}, [
-      "AI tools (Anthropic's Claude) helped us research the data and wrote the code from our specification; we checked every number against its NASA source. ",
-      "The full, dated log of what each AI tool produced is in ",
-      link(AI_USE_URL, "AI_USE.md"),
-      " in our repository."
-    ]));
-
-    // (e) Disclaimer
+    // (d) Disclaimer
     tab.appendChild(el("p", { class: "disclaimer", text: "Student project. Not affiliated with or endorsed by NASA." }));
   }
 

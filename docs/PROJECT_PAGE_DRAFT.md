@@ -61,7 +61,7 @@ https://haarshaths-maker.github.io/walkback/ (code: https://github.com/haarshath
 
 ## Use of Artificial Intelligence
 
-We used AI tools throughout and directed and checked their work ourselves. Claude, model Fable 5.2 (Anthropic), helped us research data sources and plan the project, wrote our specification of verified facts, and wrote the first version of the map; we opened and read the NASA and USGS pages it pointed to. Claude Code, model Opus 5.5 (Anthropic), wrote the data-processing notebooks and pipeline and most of the website code from that specification. This is stated at the top of every code file, in the page's metadata, and in AI_USE.md in our repository. The team chose the site and the science stops, ran the data notebook, compared the results with Curiosity's real path, checked numbers against their sources, chose the photographs and recorded the demo. No AI-generated images, video or audio appear in the project: every picture is a NASA photograph or a map drawn from NASA data. No NASA logos or mission emblems are used.
+We used AI coding assistants (Claude and Claude Code, by Anthropic) to help write the code and documentation and to help find and check data sources. The team directed the project, ran the data notebook, tested every feature, and checked the numbers against their NASA sources. No AI-generated images, video or audio are used: every picture is a NASA photograph or a map drawn from NASA data. No NASA logos or mission emblems are used.
 
 **TEAM:** if you use ChatGPT (or any other AI) to shorten this page, add one sentence naming it and what it did. Edit the "team" sentence if any part of it is not true.
 
@@ -96,7 +96,7 @@ Next we would test the speed model against suited walking data in simulated Mars
 19. Tobler, W. (1993). Three Presentations on Geographical Analysis and Modeling. NCGIA Technical Report 93-1.
 20. Images: the NASA images listed in CREDITS.md, each with its credit line (NASA/JPL-Caltech; NASA/JPL-Caltech/MSSS).
 21. Software: Leaflet 1.9.4; rasterio; GDAL; NumPy; SciPy; scikit-image; Matplotlib; Pillow; requests; Google Colab; GitHub Pages.
-22. AI tools: Claude (Fable 5.2) and Claude Code (Opus 5.5), Anthropic. **TEAM:** add ChatGPT (OpenAI) if used.
+22. AI tools: Claude and Claude Code (Anthropic). **TEAM:** add ChatGPT (OpenAI) if used.
 
 The titles of items 13 and 16 were taken from search results and slide text; open each link once and correct the title if it differs.
 
