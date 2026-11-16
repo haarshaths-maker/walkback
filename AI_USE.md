@@ -1,10 +1,6 @@
 # AI use
 
-We used AI coding assistants (Claude and Claude Code, by Anthropic) to help write the code and documentation and to help find and check data sources. The team directed the project, ran the data notebook, tested every feature, checked the numbers against their NASA sources, and made the final decisions.
-
-No AI-generated images, video or audio are used. Every picture is a NASA photograph or a map drawn from NASA data. No NASA logos or mission emblems are used.
-
-Each code file starts with a one-line comment noting that it was AI-assisted.
+We used AI coding assistants (Claude, by Anthropic) to help write code and documentation and to capture the screen recording used in our demo. The team directed the project, checked the data against NASA sources and recorded the voiceover. No AI-generated images, video or audio are used.
 
 ## Log
 

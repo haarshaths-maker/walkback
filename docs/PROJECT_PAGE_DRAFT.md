@@ -73,9 +73,9 @@ https://haarshaths-maker.github.io/walkback/ (code: https://github.com/haarshath
 
 ## Use of Artificial Intelligence
 
-We used AI coding assistants (Claude and Claude Code, by Anthropic) to help write the code and documentation, to help find and check data sources, and to capture the silent screen recording of our real site used in the demo video. The team directed the project, ran the data notebook, tested every feature, checked the numbers against their NASA sources, and recorded the voiceover. No AI-generated images, video or audio are used: every picture is a NASA photograph, a NASA map tile or a screen capture of our site. No NASA logos or mission emblems are used.
+We used AI coding assistants (Claude, by Anthropic) to help write code and documentation and to capture the screen recording of our site used in the demo. The team directed the project, checked the data against NASA sources and recorded the voiceover. No AI-generated images, video or audio are used.
 
-**TEAM:** if you use ChatGPT (or any other AI) to shorten this page, add one sentence naming it and what it did. Edit the "team" sentence if any part of it is not true.
+**TEAM:** add one sentence for ChatGPT if you used it to assemble the video.
 
 ## Assumptions and Limitations
 
@@ -108,7 +108,7 @@ Next we would test the speed model against suited walking data in simulated Mars
 19. Tobler, W. (1993). Three Presentations on Geographical Analysis and Modeling. NCGIA Technical Report 93-1.
 20. Images: the NASA images listed in CREDITS.md, each with its credit line (NASA/JPL-Caltech; NASA/JPL-Caltech/MSSS).
 21. Software: Leaflet 1.9.4; rasterio; GDAL; NumPy; SciPy; scikit-image; Matplotlib; Pillow; requests; Google Colab; GitHub Pages.
-22. AI tools: Claude and Claude Code (Anthropic). **TEAM:** add ChatGPT (OpenAI) if used.
+22. AI tools: Claude (Anthropic). **TEAM:** add ChatGPT (OpenAI) if used.
 
 The titles of items 13 and 16 were taken from search results and slide text; open each link once and correct the title if it differs.
 
