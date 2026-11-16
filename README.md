@@ -2,7 +2,7 @@
 
 **Plan the walk out. Know the walk back.**
 
-WALKBACK is a web map that plans one real Marswalk (EVA) at the Mount Sharp boxwork ridges in Gale Crater, Mars, where NASA's Curiosity rover drilled in 2025. It layers NASA optical, elevation, thermal, radiation, weather and drill-result data over a 1.07 x 1.36 km site, computes the fastest safe walking route through five science stops from a parked pressurised rover (the safe haven), and checks the plan against published NASA spacesuit limits. Its signature layer shows, for every point on the map, how many minutes the crew is from shelter; a helmet HUD and a solar-storm drill replaying the 20 May 2024 event show the same answer on the move.
+WALKBACK is a web map that plans one real Marswalk (EVA) at the Mount Sharp boxwork ridges in Gale Crater, Mars, where NASA's Curiosity rover drilled in 2025. WALKBACK layers NASA optical, elevation, thermal, radiation, weather and drill-result data over a 1.07 x 1.36 km site; it automatically computes the fastest safe walking route through five science stops from a parked pressurised rover (the "safe haven"), and checks the plan against published NASA spacesuit limits. Its signature layer shows, for every point on the map, how many minutes the crew is from shelter. We also built a helmet HUD that can simulate a solar storm happening as a drill. Specifically the 20 May 2024 event.
 
 - **Live site:** https://haarshaths-maker.github.io/walkback/
 - **Demo video (30 s):** https://youtu.be/mG5vUx7IZhw
