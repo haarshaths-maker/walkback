@@ -1,4 +1,4 @@
-# AI-assisted: written with Claude Code (Opus 5.5), reviewed by the team.
+# AI-assisted: written with Claude Code (Opus 5.5 and Sonnet 5.5), reviewed by the team.
 """
 WALKBACK data pipeline.
 
@@ -54,6 +54,38 @@ def speed_kmh(slope_rad, flat_kmh):
     """Tobler's hiking function rescaled so flat ground = flat_kmh. ASSUMPTION (SPEC section 6).
     slope_rad is the signed slope (positive = uphill)."""
     return flat_kmh * np.exp(-3.5 * np.abs(np.tan(slope_rad) + 0.05)) / math.exp(-3.5 * 0.05)
+
+
+def sample_finite(grid, rows, cols):
+    """Bilinear sample of grid at fractional (row, col) positions, using only finite cells.
+    Cells that are NaN (no-go ground, nothing to walk on) are left out and the weights of the
+    remaining neighbours are scaled back up to 1. Treating NaN as 0 would drag the value down
+    to 0 near a no-go cell. If all four neighbours are NaN, the nearest finite cell is used."""
+    n_rows, n_cols = grid.shape
+    r0 = np.floor(rows).astype(int)
+    c0 = np.floor(cols).astype(int)
+    fr = rows - r0          # how far we are from r0 towards r0 + 1 (0 to 1)
+    fc = cols - c0
+    total = np.zeros(rows.shape)    # sum of weight * value
+    weight = np.zeros(rows.shape)   # sum of weights of the finite neighbours
+    for dr, dc, w in ((0, 0, (1 - fr) * (1 - fc)), (1, 0, fr * (1 - fc)),
+                      (0, 1, (1 - fr) * fc), (1, 1, fr * fc)):
+        rr = np.clip(r0 + dr, 0, n_rows - 1)
+        cc = np.clip(c0 + dc, 0, n_cols - 1)
+        v = grid[rr, cc]
+        ok = np.isfinite(v) & (w > 0)
+        total[ok] += w[ok] * v[ok]
+        weight[ok] += w[ok]
+    out = np.full(rows.shape, np.nan)
+    good = weight > 0
+    out[good] = total[good] / weight[good]
+    # Fallback: nothing finite around this point, so copy the nearest finite cell in the grid.
+    if not good.all():
+        _, (near_r, near_c) = ndimage.distance_transform_edt(~np.isfinite(grid), return_indices=True)
+        rr = np.clip(np.rint(rows[~good]).astype(int), 0, n_rows - 1)
+        cc = np.clip(np.rint(cols[~good]).astype(int), 0, n_cols - 1)
+        out[~good] = grid[near_r[rr, cc], near_c[rr, cc]]
+    return out
 
 
 def round_or_none(value, digits):
@@ -275,7 +307,8 @@ def main(raw_dir, out_dir):
     s_c = np.interp(sample_d, cum_d, cc)
     s_t = np.interp(sample_d, cum_d, cum_t) / 60.0
     s_z = ndimage.map_coordinates(smooth, [s_r, s_c], order=1)
-    s_home = ndimage.map_coordinates(np.nan_to_num(minutes_home, nan=0.0), [s_r, s_c], order=1)
+    # Minutes to shelter: interpolate over finite cells only (NaN no-go cells must not count as 0 min).
+    s_home = sample_finite(minutes_home, s_r, s_c)
     s_leg = np.array(leg_of_cell)[np.clip(np.searchsorted(cum_d, sample_d, side="right") - 1, 0, len(leg_of_cell) - 1)]
     s_slope = np.zeros_like(sample_d)
     for i in range(len(sample_d)):

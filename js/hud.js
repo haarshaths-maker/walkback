@@ -1,4 +1,4 @@
-// AI-assisted: written with Claude Code (Opus 5.5), reviewed by the team.
+// AI-assisted: written with Claude Code (Opus 5.5) and GPT (Codex, gpt-6.1-sol), reviewed by the team.
 //
 // hud.js is the helmet HUD: a full-screen visor view with six readouts at the
 // edges (the centre stays clear so the crew can see the ground), a north-up
@@ -84,6 +84,7 @@
   var pauseUntil = 0;       // time (ms) when a science-stop pause ends
   var simMin = 0;           // simulated walking minutes while playing
   var lastFrame = 0;
+  var frameRequest = null;  // Cancel the queued callback before playback restarts.
   var returnFocus = null;
   var shownPhotoStop = null;
 
@@ -147,7 +148,7 @@
     for (var k = i + 1; k <= Math.min(i + n, last); k++) {
       if (Math.abs(samples[k].slope_deg) > Math.abs(worst)) { worst = samples[k].slope_deg; }
     }
-    r.slope = worst;
+    r.slope = i === last ? null : worst;
 
     // SHELTER: minutes back to the haven from here.
     r.shelter = s.t_home_min;
@@ -300,10 +301,17 @@
     setSub(ui.clock, "dose so far " + r.dose.toFixed(3) + " mSv",
       " (ASSUMPTION: " + config.limits.gcr_msv_per_h + " mSv/h)", " (ASSUMPTION)");
 
-    var cls = slopeClass(r.slope);
-    ui.slope.value.textContent = Math.abs(r.slope).toFixed(1) + "° " + cls.word;
-    setSub(ui.slope, r.slope >= 0 ? "uphill" : "downhill", ", steepest in next 10 m");
-    ui.swatch.style.background = cls.color;
+    // At the haven there is no route ahead to measure.
+    if (r.slope === null) {
+      ui.slope.value.textContent = "--";
+      setSub(ui.slope, "", "end of the route");
+      ui.swatch.style.background = "transparent";
+    } else {
+      var cls = slopeClass(r.slope);
+      ui.slope.value.textContent = Math.abs(r.slope).toFixed(1) + "° " + cls.word;
+      setSub(ui.slope, r.slope >= 0 ? "uphill" : "downhill", ", steepest in next 10 m");
+      ui.swatch.style.background = cls.color;
+    }
 
     // The number is the biggest text on screen; the unit sits beside it in smaller type.
     ui.shelter.value.textContent = r.shelter.toFixed(1);
@@ -328,7 +336,11 @@
   }
 
   function showAlert() {
-    if (ui) { ui.alert.hidden = !WALKBACK.stormActive; }
+    if (ui) {
+      ui.alert.hidden = !WALKBACK.stormActive;
+      // Starting a drill also releases a science pause already in progress.
+      if (WALKBACK.stormActive) { pauseUntil = 0; ui.science.hidden = true; }
+    }
   }
 
   // ------------------------------------------------------------------
@@ -340,17 +352,19 @@
   }
 
   function startPlaying() {
+    stopPlaying();  // Only one animation callback may be queued at a time.
     if (crewIndex() >= samples.length - 1) { moveCrew(0); }   // at the end: start again
     playing = true;
     simMin = samples[crewIndex()].t_walk_min;
     lastFrame = performance.now();
     pauseUntil = 0;
     ui.playBtn.textContent = "Pause";
-    requestAnimationFrame(frame);
+    frameRequest = requestAnimationFrame(frame);
   }
 
   function stopPlaying() {
     playing = false;
+    if (frameRequest !== null) { cancelAnimationFrame(frameRequest); frameRequest = null; }
     if (ui) {
       ui.playBtn.textContent = "Play";
       ui.science.hidden = true;
@@ -358,11 +372,14 @@
   }
 
   function frame(now) {
+    frameRequest = null;  // This callback is running, rather than waiting in the queue.
     if (!playing || !isOpen) { return; }
     var dt = (now - lastFrame) / 1000;   // real seconds since the last frame
     lastFrame = now;
 
-    if (now < pauseUntil) { requestAnimationFrame(frame); return; }
+    // Storm playback keeps walking past science stops, including an existing pause.
+    if (WALKBACK.stormActive) { pauseUntil = 0; }
+    if (now < pauseUntil) { frameRequest = requestAnimationFrame(frame); return; }
     ui.science.hidden = true;
 
     // 60x: one real second = 60 simulated seconds = 1 walking minute.
@@ -374,21 +391,21 @@
     // Did we reach the end of a leg that finishes at a science stop?
     for (var k = i + 1; k <= target; k++) {
       var leg = samples[k].leg;
-      if (k === legEnd[leg] && leg < stops.length) {
+      if (!WALKBACK.stormActive && k === legEnd[leg] && leg < stops.length) {
         var stop = stops[leg];
         moveCrew(k);
         simMin = samples[k].t_walk_min;
         pauseUntil = now + 2000;
         ui.science.textContent = "SCIENCE STOP: " + stop.name + ", " + stop.science_min + " min planned";
         ui.science.hidden = false;
-        requestAnimationFrame(frame);
+        frameRequest = requestAnimationFrame(frame);
         return;
       }
     }
 
     if (target !== i) { moveCrew(target); }
     if (target >= last) { stopPlaying(); return; }
-    requestAnimationFrame(frame);
+    frameRequest = requestAnimationFrame(frame);
   }
 
   // ------------------------------------------------------------------
@@ -420,15 +437,13 @@
 
   function onKeyDown(e) {
     if (!isOpen) { return; }
+    if (e.key === "Escape") { e.preventDefault(); closeHud(); return; }
+    // Buttons and the slider keep their native Space and arrow-key behaviour.
+    if (e.target.closest && e.target.closest("button, input, select, textarea, a, [contenteditable]")) { return; }
     var step = Math.round(10 / stepM);   // 10 m
-    if (e.key === "Escape") { e.preventDefault(); closeHud(); }
-    else if (e.key === "ArrowLeft") { e.preventDefault(); stopPlaying(); moveCrew(crewIndex() - step); }
+    if (e.key === "ArrowLeft") { e.preventDefault(); stopPlaying(); moveCrew(crewIndex() - step); }
     else if (e.key === "ArrowRight") { e.preventDefault(); stopPlaying(); moveCrew(crewIndex() + step); }
     else if (e.key === " " || e.key === "Spacebar") { e.preventDefault(); togglePlay(); }
-  }
-  // Stop a space press from also "clicking" whichever button has focus.
-  function onKeyUp(e) {
-    if (isOpen && (e.key === " " || e.key === "Spacebar")) { e.preventDefault(); }
   }
 
   // ------------------------------------------------------------------
@@ -455,7 +470,6 @@
     }
 
     document.addEventListener("keydown", onKeyDown);
-    document.addEventListener("keyup", onKeyUp);
     document.addEventListener("walkback:crew-moved", function () { if (isOpen) { render(); } });
     document.addEventListener("walkback:storm", showAlert);
   });

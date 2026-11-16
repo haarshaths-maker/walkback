@@ -1,4 +1,4 @@
-// AI-assisted: written with Claude Code (Opus 5.5), reviewed by the team.
+// AI-assisted: written with Claude Code (Opus 5.5) and GPT (Codex, gpt-6.1-sol), reviewed by the team.
 //
 // stops.js fills the Stops tab (one card per stop, with NASA photos and a
 // photo viewer) and the Sources tab (where every limit comes from, data
@@ -42,6 +42,7 @@
 
   // Minutes after EVA start written as h:mm, for example 83.4 -> "1:23".
   function hmm(minutes) {
+    if (!Number.isFinite(minutes)) { return "--"; }
     var total = Math.round(minutes);
     var h = Math.floor(total / 60);
     var m = total - h * 60;
@@ -87,21 +88,31 @@
     return list;
   }
 
-  // Put a photo into an <img>. If every address fails, call onMissing so the
-  // card can drop the photo. A broken-image icon is never shown.
+  // Try every address for a photo. Cancel old listeners when reusing an image
+  // so navigating the viewer cannot leave a previous photo's retry active.
   function loadPhoto(img, image, onMissing) {
+    if (img.cancelPhotoLoad) { img.cancelPhotoLoad(); }
     var sources = photoSources(image);
     var i = 0;
+    function cleanup() {
+      img.removeEventListener("error", tryNext);
+      img.removeEventListener("load", cleanup);
+      img.cancelPhotoLoad = null;
+    }
     function tryNext() {
       if (i >= sources.length) {
-        console.warn("WALKBACK: photo " + image.id + " could not be loaded; the card is shown without it.");
+        cleanup();
+        console.warn("WALKBACK: photo " + image.id + " could not be loaded.");
+        img.removeAttribute("src");
         onMissing();
         return;
       }
       img.src = sources[i];
       i += 1;
     }
+    img.cancelPhotoLoad = cleanup;
     img.addEventListener("error", tryNext);
+    img.addEventListener("load", cleanup);
     tryNext();
   }
 
@@ -123,6 +134,9 @@
     var img = el("img", { class: "viewer-img", alt: "" });
     var caption = el("div", { class: "viewer-caption" });
     var counter = el("div", { class: "viewer-counter" });
+    var unavailable = el("p", { hidden: "", text: "Photo unavailable" });
+    // Keep announcements separate so the visible counter stays compact.
+    var status = el("div", { class: "visually-hidden", "aria-live": "polite", "aria-atomic": "true" });
     var closeBtn = el("button", { class: "viewer-btn viewer-close", type: "button", "aria-label": "Close photo viewer", text: "Close" });
     var prevBtn = el("button", { class: "viewer-btn viewer-prev", type: "button", "aria-label": "Previous photo of this stop", text: "‹ Previous" });
     var nextBtn = el("button", { class: "viewer-btn viewer-next", type: "button", "aria-label": "Next photo of this stop", text: "Next ›" });
@@ -130,6 +144,8 @@
       el("div", { class: "viewer-inner" }, [
         el("div", { class: "viewer-top" }, [counter, closeBtn]),
         img,
+        unavailable,
+        status,
         caption,
         el("div", { class: "viewer-nav" }, [prevBtn, nextBtn])
       ])
@@ -145,25 +161,32 @@
     // Keyboard: Esc closes, left and right arrows step between photos.
     document.addEventListener("keydown", function (e) {
       if (box.hidden) { return; }
-      if (e.key === "Escape") { e.preventDefault(); closeViewer(); }
+      // Recompute the list because navigation buttons can be hidden and the
+      // caption's source link is rebuilt for each photo.
+      if (e.key === "Tab") {
+        var controls = Array.prototype.filter.call(box.querySelectorAll("button, a[href]"), function (node) {
+          return !node.hidden && !node.disabled && node.getClientRects().length > 0;
+        });
+        var index = controls.indexOf(document.activeElement);
+        if (index < 0 || (e.shiftKey && index === 0) || (!e.shiftKey && index === controls.length - 1)) {
+          e.preventDefault();
+          controls[e.shiftKey ? controls.length - 1 : 0].focus();
+        }
+      }
+      else if (e.key === "Escape") { e.preventDefault(); closeViewer(); }
       else if (e.key === "ArrowLeft") { e.preventDefault(); stepViewer(-1); }
       else if (e.key === "ArrowRight") { e.preventDefault(); stepViewer(1); }
     });
 
-    img.addEventListener("error", function () {
-      // The card already hides photos that fail, so this is rare. Show text instead.
-      img.hidden = true;
-      console.warn("WALKBACK: photo could not be shown in the viewer.");
-    });
-
-    return { box: box, img: img, caption: caption, counter: counter, closeBtn: closeBtn, prevBtn: prevBtn, nextBtn: nextBtn };
+    return { box: box, img: img, caption: caption, counter: counter, status: status,
+      unavailable: unavailable, closeBtn: closeBtn, prevBtn: prevBtn, nextBtn: nextBtn };
   }
 
   function openViewer(list, index, returnFocus) {
     if (!viewer) { viewer = buildViewer(); }
     viewerList = list;
     viewerIndex = index;
-    viewerReturnFocus = returnFocus || null;
+    viewerReturnFocus = returnFocus || document.activeElement;
     viewer.box.hidden = false;
     showViewerPhoto();
     viewer.closeBtn.focus();
@@ -172,8 +195,10 @@
   function closeViewer() {
     if (!viewer) { return; }
     viewer.box.hidden = true;
+    if (viewer.img.cancelPhotoLoad) { viewer.img.cancelPhotoLoad(); }
     viewer.img.removeAttribute("src");
-    if (viewerReturnFocus) { viewerReturnFocus.focus(); }
+    viewer.status.textContent = "";
+    if (viewerReturnFocus && viewerReturnFocus.isConnected) { viewerReturnFocus.focus(); }
   }
 
   function stepViewer(step) {
@@ -185,7 +210,11 @@
   function showViewerPhoto() {
     var item = viewerList[viewerIndex];
     viewer.img.hidden = false;
-    viewer.img.src = item.src;
+    viewer.unavailable.hidden = true;
+    loadPhoto(viewer.img, item.image, function () {
+      viewer.img.hidden = true;
+      viewer.unavailable.hidden = false;
+    });
     viewer.img.alt = item.image.title;
     viewer.caption.innerHTML = "";
     viewer.caption.appendChild(el("div", { class: "viewer-title", text: item.image.title }));
@@ -199,6 +228,7 @@
       link(item.image.source_url, "source")
     ]));
     viewer.counter.textContent = "Photo " + (viewerIndex + 1) + " of " + viewerList.length;
+    viewer.status.textContent = viewer.counter.textContent + ": " + item.image.title;
     var several = viewerList.length > 1;
     viewer.prevBtn.hidden = !several;
     viewer.nextBtn.hidden = !several;
@@ -262,29 +292,41 @@
       var stopImages = (stop.images || [])
         .map(function (id) { return imagesById[id]; })
         .filter(function (im) { return im && (im.remote_url || im.file); });
-      var viewerItems = [];   // photos that actually loaded, for the viewer
+      var viewerItems = stopImages.map(function (im) { return { image: im }; });
       if (stopImages.length) {
-        var first = stopImages[0];
-        var img = el("img", { class: "stop-photo-img", alt: first.title, loading: "lazy" });
-        var photoBtn = el("button", { class: "stop-photo-btn", type: "button",
-          "aria-label": "Enlarge photo: " + first.title }, [img]);
-        var figure = el("figure", { class: "stop-photo" }, [
-          photoBtn,
-          el("span", { class: "photo-tag", text: photoTag(first) }),
-          el("figcaption", { class: "photo-credit", text: "Credit: " + first.credit })
-        ]);
+        var coverIndex = 0;
+        var img = el("img", { class: "stop-photo-img", alt: "", loading: "lazy" });
+        var photoBtn = el("button", { class: "stop-photo-btn", type: "button" }, [img]);
+        var tag = el("span", { class: "photo-tag" });
+        var credit = el("figcaption", { class: "photo-credit" });
+        var figure = el("figure", { class: "stop-photo" }, [photoBtn, tag, credit]);
         card.appendChild(figure);
-        loadPhoto(img, first, function () { figure.remove(); });
 
-        // Work out the address of every photo of this stop for the viewer.
-        stopImages.forEach(function (im) {
-          viewerItems.push({ image: im, src: photoSources(im)[0] });
-        });
-        img.addEventListener("load", function () { viewerItems[0].src = img.currentSrc || img.src; });
-
+        // A failed cover tries the next photo, including all of its sources.
+        // Keep a gallery button even when none of the covers can be loaded.
+        function tryCover() {
+          var image = stopImages[coverIndex];
+          img.alt = image.title;
+          photoBtn.setAttribute("aria-label", "Enlarge photo: " + image.title);
+          tag.textContent = photoTag(image);
+          credit.textContent = "Credit: " + image.credit;
+          loadPhoto(img, image, function () {
+            if (coverIndex + 1 < stopImages.length) {
+              coverIndex += 1;
+              tryCover();
+            } else {
+              img.remove();
+              tag.remove();
+              credit.remove();
+              photoBtn.appendChild(document.createTextNode("Open photo gallery"));
+              photoBtn.setAttribute("aria-label", "Open photo gallery for " + stop.name);
+            }
+          });
+        }
+        tryCover();
         photoBtn.addEventListener("click", function (e) {
           e.stopPropagation();          // do not also fly the map
-          openViewer(viewerItems, 0, photoBtn);
+          openViewer(viewerItems, coverIndex, photoBtn);
         });
         if (stopImages.length > 1) {
           figure.appendChild(el("span", { class: "photo-count", text: stopImages.length + " photos" }));
@@ -295,7 +337,7 @@
       var badge = isHaven ? "Safe haven" : "Stop " + scienceNumber;
       card.appendChild(el("div", { class: "stop-head" }, [
         el("span", { class: "stop-badge" + (isHaven ? " is-haven" : ""), text: badge }),
-        el("h4", { class: "stop-name", text: stop.name })
+        el("h4", { class: "stop-name", tabindex: "-1", text: stop.name })
       ]));
       card.appendChild(el("p", { class: "stop-objective", text: stop.objective }));
 
@@ -304,17 +346,17 @@
 
       var facts = el("dl", { class: "stop-facts" });
       if (isHaven) {
-        facts.appendChild(el("dt", { text: "EVA start" }));
+        facts.appendChild(el("dt", { text: "EVA start (h:mm)" }));
         facts.appendChild(el("dd", { text: "0:00" }));
-        facts.appendChild(el("dt", { text: "Back at the haven" }));
-        facts.appendChild(el("dd", { text: hmm(arrivals.__return) + " after EVA start" }));
+        facts.appendChild(el("dt", { text: "Back at the haven (h:mm after EVA start)" }));
+        facts.appendChild(el("dd", { text: hmm(arrivals.__return) }));
       } else {
         facts.appendChild(el("dt", { text: "Planned science" }));
         var sci = el("dd", { text: stop.science_min + " min" });
         sci.appendChild(el("div", { class: "assumption", text: "ASSUMPTION: planned minutes" }));
         facts.appendChild(sci);
-        facts.appendChild(el("dt", { text: "Arrival" }));
-        var arr = el("dd", { text: hmm(arrivals[stop.id]) + " after EVA start" });
+        facts.appendChild(el("dt", { text: "Arrival (h:mm after EVA start)" }));
+        var arr = el("dd", { text: hmm(arrivals[stop.id]) });
         arr.appendChild(el("div", { class: "assumption", text: "ASSUMPTION: modelled walking speed" }));
         facts.appendChild(arr);
       }
@@ -368,6 +410,9 @@
       marker.on("click", function () {
         showTab("stops");
         highlightCard(stop.id, true);
+        // Move keyboard and screen-reader focus to the card the marker opened.
+        var heading = cardsById[stop.id].querySelector(".stop-name");
+        heading.focus({ preventScroll: true });
       });
     });
   }
@@ -464,7 +509,11 @@
   // ------------------------------------------------------------------
 
   document.addEventListener("walkback:plan-ready", function () {
-    loadJson("data/images.json").then(function (images) {
+    // Photos are optional: a missing manifest must not hide the stop data.
+    loadJson("data/images.json").catch(function (err) {
+      console.warn("WALKBACK: photos unavailable. " + err.message);
+      return [];
+    }).then(function (images) {
       WALKBACK.images = images;
       buildStopsTab(WALKBACK.stops, images, WALKBACK.profile, WALKBACK.map);
       connectMarkers(WALKBACK.stops);

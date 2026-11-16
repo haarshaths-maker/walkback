@@ -1,4 +1,4 @@
-// AI-assisted: written with Claude Code (Opus 5.5), reviewed by the team.
+// AI-assisted: written with Claude Code (Opus 5.5 and Sonnet 5.5), reviewed by the team.
 //
 // intro.js shows a welcome screen the first time the page opens: the one
 // problem WALKBACK solves, what the site is (one pre-planned walk, not a
@@ -38,19 +38,28 @@
 
   function build() {
     var bg = el("img", { class: "intro-bg", alt: "", src: "img/spiderwebs_orbit_pia26306.jpg" });
-    bg.addEventListener("error", function () { bg.remove(); });
     var credit = el("div", { class: "intro-credit",
       text: "Background: boxwork ridges seen from orbit by HiRISE. NASA/JPL-Caltech/Univ. of Arizona." });
+    // If the photo fails to load, remove its credit line too.
+    bg.addEventListener("error", function () { bg.remove(); credit.remove(); });
 
     var start = el("button", { type: "button", class: "btn btn-primary intro-start", text: "Open the plan" });
     start.addEventListener("click", close);
 
     var helmet = el("button", { type: "button", class: "btn intro-helmet", text: "Helmet view" });
     helmet.addEventListener("click", function () {
-      close();
       var hud = document.getElementById("hud-open");
-      if (hud && !hud.disabled) { hud.click(); }
+      if (!hud || hud.disabled) {
+        // The helmet view is not ready yet: keep the welcome open and say why.
+        loadingNote.hidden = false;
+        return;
+      }
+      close();
+      hud.click();
     });
+    // Short status line, shown only if Helmet view is clicked too early.
+    var loadingNote = el("p", { class: "intro-fine", role: "status", text: "Helmet view is loading. Try again in a moment." });
+    loadingNote.hidden = true;
 
     var list = el("ul", { class: "intro-points" });
     POINTS.forEach(function (p) {
@@ -67,6 +76,7 @@
         text: "This is one pre-planned Marswalk at the boxwork ridges of Mount Sharp in Gale Crater. The crew leaves a parked pressurised rover, visits five sites where NASA's Curiosity rover drilled and took pictures, and walks back. There is no destination to choose: the route is computed from NASA data, and you inspect it." }),
       list,
       el("div", { class: "intro-actions" }, [start, helmet]),
+      loadingNote,
       el("p", { class: "intro-fine", text: "Student project. Not affiliated with or endorsed by NASA. A planning aid, not flight software." })
     ]);
 
@@ -77,10 +87,33 @@
       credit
     ]);
     document.body.appendChild(box);
+  }
 
-    box.addEventListener("keydown", function (e) {
-      if (e.key === "Escape") { e.preventDefault(); close(); }
-    });
+  // Keys while the welcome is open. This listens on the whole document (not
+  // just the dialog), so Escape still works after a click on the backdrop.
+  // It runs in the capture phase and stops the event, so one Escape closes
+  // only this dialog and not the Helmet view or photo viewer underneath it.
+  function onKeyDown(e) {
+    if (e.key === "Escape") {
+      e.preventDefault();
+      e.stopPropagation();
+      close();
+      return;
+    }
+    if (e.key !== "Tab") { return; }
+    // Keep Tab and Shift+Tab inside the dialog: wrap around its buttons.
+    var buttons = box.querySelectorAll("button:not([disabled])");
+    if (!buttons.length) { return; }
+    var first = buttons[0], last = buttons[buttons.length - 1];
+    var active = document.activeElement;
+    var inButtons = Array.prototype.indexOf.call(buttons, active) !== -1;
+    if (e.shiftKey && (active === first || !inButtons)) {
+      e.preventDefault();
+      last.focus();
+    } else if (!e.shiftKey && (active === last || !box.contains(active))) {
+      e.preventDefault();
+      first.focus();
+    }
   }
 
   function open() {
@@ -88,6 +121,8 @@
     returnFocus = document.activeElement;
     box.hidden = false;
     box.scrollTop = 0;
+    box.querySelector(".intro-card [role=status]").hidden = true;
+    document.addEventListener("keydown", onKeyDown, true);
     document.body.classList.add("intro-is-open");
     // Focus the card itself (not a button) so screen readers start at the
     // top and no focus ring sits on the button before anyone uses the keyboard.
@@ -97,10 +132,17 @@
   function close() {
     if (!box) { return; }
     box.hidden = true;
+    document.removeEventListener("keydown", onKeyDown, true);
     document.body.classList.remove("intro-is-open");
     // The map may have been sized while hidden behind the dialog.
     if (window.WALKBACK && WALKBACK.map) { WALKBACK.map.invalidateSize(); }
-    if (returnFocus && returnFocus.focus && returnFocus !== document.body) { returnFocus.focus(); }
+    if (returnFocus && returnFocus.focus && returnFocus !== document.body && document.contains(returnFocus)) {
+      returnFocus.focus();
+    } else {
+      // Nothing to return to (for example the first load): focus the Plan tab.
+      var planTab = document.getElementById("tabbtn-plan");
+      if (planTab) { planTab.focus(); }
+    }
   }
 
   var aboutBtn = document.getElementById("intro-open");

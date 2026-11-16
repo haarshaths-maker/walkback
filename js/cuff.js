@@ -1,4 +1,4 @@
-// AI-assisted: written with Claude Code (Opus 5.5), reviewed by the team.
+// AI-assisted: written with Claude Code (Opus 5.5 and Sonnet 5.5), reviewed by the team.
 //
 // cuff.js makes the printable cuff card: one black-on-white page with the
 // legs, stops, safety checks and the shelter headline, small enough to wear
@@ -36,7 +36,13 @@
   function table(headers, rows) {
     var thead = el("thead", {}, [el("tr", {}, headers.map(function (h) { return el("th", { text: h }); }))]);
     var tbody = el("tbody", {}, rows.map(function (r) {
-      return el("tr", {}, r.map(function (c) { return el("td", { text: c }); }));
+      return el("tr", {}, r.map(function (c) {
+        // A cell is plain text, or a list of lines (each line goes in its own <div>).
+        if (Array.isArray(c)) {
+          return el("td", {}, c.map(function (line) { return el("div", { text: line }); }));
+        }
+        return el("td", { text: c });
+      }));
     }));
     return el("table", {}, [thead, tbody]);
   }
@@ -59,19 +65,42 @@
     return result;
   }
 
-  // Fill the hidden cuff card with the current plan.
-  function buildCard() {
-    var stats = WALKBACK.stats, stops = WALKBACK.stops, route = WALKBACK.route;
+  // Show a number or text, or "--" when the value is missing (null / undefined).
+  function show(v) {
+    return v === null || v === undefined || v === "" ? "--" : String(v);
+  }
+
+  // Find the card, or make it. It is hidden on screen (see css/style.css).
+  function getCard() {
     var card = document.getElementById("cuff-card");
     if (!card) {
       card = el("section", { id: "cuff-card", "aria-hidden": "true" });
       document.body.appendChild(card);
     }
+    return card;
+  }
+
+  // Fill the hidden cuff card with the current plan.
+  function buildCard() {
+    var card = getCard();
     card.innerHTML = "";
+
+    // If the plan data has not loaded (or failed), print one plain line
+    // instead of a blank page.
+    // WALKBACK is a top-level const, so it is not a property of window.
+    var W = typeof WALKBACK === "undefined" ? null : WALKBACK;
+    if (!W || !W.stats || !W.stops || !W.route || !W.profile || !W.config) {
+      card.appendChild(el("p", { class: "cuff-note", text: "Plan data not loaded" }));
+      return;
+    }
+    var stats = W.stats, stops = W.stops, route = W.route;
 
     card.appendChild(el("h1", { text: WALKBACK.config.project + " cuff card: Mount Sharp boxwork, Gale Crater" }));
     card.appendChild(el("p", { class: "cuff-headline",
       text: "Longest walk back to shelter: " + stats.max_time_to_haven_min.toFixed(1) + " min" }));
+    // Same wording as the Plan tab.
+    card.appendChild(el("p", { class: "cuff-note",
+      text: "ASSUMPTION: every slope is walked as if uphill, so this is a cautious figure." }));
 
     // Legs
     card.appendChild(el("h2", { text: "Legs" }));
@@ -89,16 +118,25 @@
       return [s.id, s.name, s.science_min + " min", hmm(arrivals[s.id])];
     });
     stopRows.push([stops[0].id, stops[0].name, "-", "back " + hmm(arrivals.__return)]);
-    card.appendChild(table(["Id", "Stop", "Planned science", "Arrival (h:mm after start)"], stopRows));
+    card.appendChild(table(["Id", "Stop", "Planned science (ASSUMPTION)", "Arrival (h:mm after start)"], stopRows));
 
     // Checks
     card.appendChild(el("h2", { text: "Checks" }));
     card.appendChild(table(["Check", "Plan", "Limit", "Result"],
       stats.checks.map(function (c) {
-        var value = typeof c.value === "number" ? c.value + " " + c.unit : String(c.value);
-        var limit = typeof c.limit === "number" ? "max " + c.limit + " " + c.unit : String(c.limit);
+        var value = typeof c.value === "number" ? c.value + " " + c.unit : show(c.value);
+        var limit = typeof c.limit === "number" ? "max " + c.limit + " " + c.unit : show(c.limit);
         var result = c.pass === true ? "PASS" : c.pass === false ? "FAIL" : "NO DATA";
-        return [c.label, value, limit, result];
+        // The label cell gets extra lines: the same notes the Plan tab shows.
+        var label = [c.label];
+        if (c.assumption) { label.push("ASSUMPTION: " + c.assumption); }
+        if (c.note) { label.push(c.note); }
+        if (c.flag) { label.push("Note: " + c.flag); }
+        if (c.id === "daylight") {
+          label.push("ASSUMPTION: start 2 h after sunrise, back 2 h before sunset" +
+            (c.sol !== undefined && c.sol !== null ? ", on sol " + c.sol : "") + ".");
+        }
+        return [label, value, limit, result];
       })));
 
     card.appendChild(el("p", { class: "cuff-note", text: "Planning aid. ASSUMPTIONS apply. See Sources." }));
@@ -116,8 +154,12 @@
     var slot = document.getElementById("plan-actions");
     if (slot) { slot.appendChild(button); }
     else { tab.insertBefore(el("div", { class: "cuff-row" }, [button]), tab.firstChild); }
-    // Also fill the card if someone prints with Ctrl+P / Cmd+P.
-    window.addEventListener("beforeprint", buildCard);
   });
+
+  // Also fill the card if someone prints with Ctrl+P / Cmd+P. This is
+  // registered at once (not after the plan is ready), so printing before the
+  // data loads, or after it fails, shows "Plan data not loaded" and not a blank page.
+  window.addEventListener("beforeprint", buildCard);
+  buildCard();
 
 })();

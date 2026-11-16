@@ -1,4 +1,4 @@
-// AI-assisted: written with Claude Code (Opus 5.5), reviewed by the team.
+// AI-assisted: written with Claude Code (Opus 5.5) and GPT (Codex, gpt-6.1-sol), reviewed by the team.
 //
 // conditions.js fills the Conditions tab: weather Curiosity measured here,
 // the EVA daylight window, radiation, and the solar storm drill.
@@ -117,6 +117,11 @@
       var opt = el("option", { value: String(s.sol), text: "Sol " + s.sol });
       select.appendChild(opt);
     });
+    // An empty feed still leaves the radiation and drill sections usable.
+    if (!sols.length) {
+      tab.appendChild(el("p", { class: "placeholder", text: "No weather data available; the daylight window cannot be checked." }));
+      return;
+    }
     var wanted = config.default_sol;
     var hasDefault = sols.some(function (s) { return s.sol === wanted; });
     select.value = String(hasDefault ? wanted : sols[sols.length - 1].sol);
@@ -154,8 +159,8 @@
       ["Air pressure", withUnit(day.pressure_pa, "Pa")],
       ["UV index", day.uv || "no data"],
       ["Sky", day.opacity || "no data"],
-      ["Sunrise", day.sunrise ? day.sunrise + " local time" : "no data"],
-      ["Sunset", day.sunset ? day.sunset + " local time" : "no data"]
+      ["Sunrise", clockToMin(day.sunrise) !== null ? day.sunrise + " local time" : "no data"],
+      ["Sunset", clockToMin(day.sunset) !== null ? day.sunset + " local time" : "no data"]
     ];
     var dl = el("dl", { class: "totals" });
     rows.forEach(function (r) {
@@ -187,6 +192,12 @@
     }
 
     var winStart = rise + marginMin, winEnd = set - marginMin;
+    // Do not draw or label a reversed or empty daylight window.
+    if (winEnd <= winStart) {
+      card.appendChild(el("p", {}, ["No usable window: daylight is too short for the safety margins. ", resultBadge(false)]));
+      card.appendChild(el("div", { class: "assumption", text: "ASSUMPTION: allow " + config.limits.daylight_margin_h + " h after sunrise and before sunset." }));
+      return;
+    }
     var evaEnd = winStart + evaMin;
     var pass = evaEnd <= winEnd;
 
@@ -328,7 +339,7 @@
     card.appendChild(active);
     tab.appendChild(card);
 
-    drill = { startBtn: startBtn, active: active, slider: slider, position: position, shelter: shelter, escapeText: escapeText };
+    drill = { startBtn: startBtn, active: active, slider: slider, position: position, shelter: shelter, escapeText: escapeText, standDown: standDown };
 
     startBtn.addEventListener("click", startDrill);
     standDown.addEventListener("click", standDownDrill);
@@ -355,6 +366,8 @@
     banner.hidden = false;
     drill.active.hidden = false;
     drill.startBtn.disabled = true;
+    // Keep keyboard focus on an available action after disabling Run.
+    drill.standDown.focus();
     document.dispatchEvent(new CustomEvent("walkback:storm", { detail: { active: true } }));
     // Start from the crew's current position (0 = at the haven if nobody has moved it).
     setCrewIndex(typeof WALKBACK.crewIndex === "number" ? WALKBACK.crewIndex : 0, "conditions");
@@ -374,7 +387,10 @@
   // Which science stop is nearest the crew (straight line, in Mars metres)?
   function nearestEscape(sample) {
     var here = L.latLng(sample.lat, sample.lon);
-    var best = null, bestD = Infinity;
+    // A stop's path is not relevant when the haven itself is nearer.
+    if (sample.t_home_min === 0) { return null; }
+    var haven = WALKBACK.stops[0];
+    var best = null, bestD = map.distance(here, L.latLng(haven.lat, haven.lon));
     escape.features.forEach(function (f) {
       var stop = stopsById[f.properties.stop];
       if (!stop) { return; }
@@ -418,8 +434,11 @@
       ]).addTo(map);
       crewDot.bringToFront();
       var stop = stopsById[f.properties.stop];
-      drill.escapeText.textContent = "Red dashed line: fastest safe path to the haven from the nearest stop, " +
-        stop.name + " (" + Number(f.properties.walk_min).toFixed(1) + " min walk).";
+      drill.escapeText.textContent = "Red dashed line: reference escape path from the nearest stop, " +
+        stop.name + ". Shelter time above is for the crew's current position.";
+    } else {
+      drill.escapeText.textContent = s.t_home_min === 0 ? "At the haven; no escape path needed." :
+        "The haven is nearer than any science stop; no stop escape path shown. Shelter time above is for the crew's current position.";
     }
   }
 
@@ -427,7 +446,26 @@
   // Start once plan.js has loaded the route data
   // ------------------------------------------------------------------
 
+  // plan.js reports fetch failures in its tab rather than emitting an error event.
+  // Watch that existing message so Conditions cannot remain stuck on Loading.
+  var planTab = document.getElementById("tab-plan");
+  var planObserver = null;
+  function showPlanFailure() {
+    var message = planTab && planTab.querySelector(".placeholder");
+    if (!message || message.textContent.indexOf("Details:") === -1) { return; }
+    var tab = document.getElementById("tab-conditions");
+    tab.innerHTML = "";
+    tab.appendChild(el("p", { class: "placeholder", text: "The conditions could not load because the route data failed to load. Please reload the page to try again." }));
+    if (planObserver) { planObserver.disconnect(); }
+  }
+  if (planTab) {
+    planObserver = new MutationObserver(showPlanFailure);
+    planObserver.observe(planTab, { childList: true, subtree: true, characterData: true });
+    showPlanFailure();
+  }
+
   document.addEventListener("walkback:plan-ready", function () {
+    if (planObserver) { planObserver.disconnect(); }
     map = WALKBACK.map;
     stats = WALKBACK.stats;
     sources = WALKBACK.sources;

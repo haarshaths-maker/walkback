@@ -1,4 +1,4 @@
-// AI-assisted: written with Claude Code (Opus 5.5), reviewed by the team.
+// AI-assisted: written with Claude Code (Opus 5.5) and GPT (Codex, gpt-6.1-sol), reviewed by the team.
 //
 // plan.js draws the computed data on the map and fills the Plan tab.
 // It waits for app.js to finish building the map ("walkback:ready"),
@@ -163,13 +163,20 @@
             }
             div.appendChild(block);
           });
+        // Base imagery remains visible even with every raster overlay off.
+        map.eachLayer(function (layer) {
+          if (layer.getAttribution && /THEMIS/i.test(layer.getAttribution() || "")) {
+            any = true;
+            div.appendChild(el("div", { class: "legend-note", text: "Thermal imagery: 100 m per pixel, context only" }));
+          }
+        });
         div.style.display = any ? "" : "none";
       }
     });
     var legend = new LegendControl();
     legend.addTo(map);
     legend.update();
-    map.on("overlayadd overlayremove", function () { legend.update(); });
+    map.on("overlayadd overlayremove baselayerchange", function () { legend.update(); });
     return legend;
   }
 
@@ -268,11 +275,13 @@
 
     // Show exactly one data layer (or none for "route").
     function setView(id) {
-      VIEWS.forEach(function (v) {
-        if (!v.layer || !layers[v.layer]) { return; }
-        var want = v.id === id;
-        if (want && !map.hasLayer(layers[v.layer])) { map.addLayer(layers[v.layer]); }
-        if (!want && map.hasLayer(layers[v.layer])) { map.removeLayer(layers[v.layer]); }
+      // Include hillshade in cleanup, although it has no preset button.
+      var view = VIEWS.filter(function (v) { return v.id === id; })[0];
+      if (!view) { return; }
+      Object.keys(layers).forEach(function (key) {
+        var want = key === view.layer;
+        if (want && !map.hasLayer(layers[key])) { map.addLayer(layers[key]); }
+        if (!want && map.hasLayer(layers[key])) { map.removeLayer(layers[key]); }
       });
       // Leaflet only fires overlayadd/overlayremove from its own switcher, so tell the legend.
       map.fire("overlayadd");
@@ -281,8 +290,15 @@
 
     // Keep the buttons in step if someone uses the layer switcher instead.
     function syncButtons() {
-      var active = "route";
-      VIEWS.forEach(function (v) { if (v.layer && layers[v.layer] && map.hasLayer(layers[v.layer])) { active = v.id; } });
+      // Custom raster combinations do not match any exclusive preset.
+      var active = null;
+      VIEWS.forEach(function (v) {
+        if (v.layer && !layers[v.layer]) { return; }
+        var matches = Object.keys(layers).every(function (key) {
+          return map.hasLayer(layers[key]) === (key === v.layer);
+        });
+        if (matches) { active = v.id; }
+      });
       Object.keys(buttons).forEach(function (id) {
         buttons[id].setAttribute("aria-pressed", id === active ? "true" : "false");
         buttons[id].classList.toggle("is-active", id === active);
@@ -327,14 +343,26 @@
     tab.innerHTML = "";
 
     // (1) Verdict
-    var total = stats.checks.length;
-    var passed = stats.checks.filter(function (c) { return c.pass === true; }).length;
-    var allPass = passed === total;
+    // Missing or unknown checks must never grant permission to proceed.
+    var checks = Array.isArray(stats.checks) ? stats.checks : [];
+    var required = ["slope", "range", "duration", "shelter", "daylight"];
+    var missing = required.filter(function (id) {
+      return !checks.some(function (c) { return c.id === id; });
+    });
+    var total = checks.length;
+    var passed = checks.filter(function (c) { return c.pass === true; }).length;
+    var failed = checks.filter(function (c) { return c.pass === false; }).length;
+    var unknown = total - passed - failed;
+    var allPass = missing.length === 0 && passed === total;
+    var verdictNote = [];
+    if (missing.length) { verdictNote.push("Missing required checks: " + missing.join(", ") + "."); }
+    if (unknown) { verdictNote.push(unknown + " safety checks have no confirmed result."); }
+    if (failed) { verdictNote.push(failed + " safety checks fail."); }
     var verdict = el("div", { class: "verdict " + (allPass ? "is-pass" : "is-fail") });
     verdict.appendChild(WALKBACK.icon(allPass ? "check" : "alert"));
     verdict.appendChild(el("div", {}, [
-      el("div", { class: "verdict-title", text: allPass ? "EVA plan: GO · " + passed + " of " + total + " safety checks pass" : "EVA plan: NO-GO · " + (total - passed) + " of " + total + " safety checks fail" }),
-      el("div", { class: "verdict-sub", text: "One pre-planned loop: from the parked rover (the shelter) through five of Curiosity's drill and imaging sites, and back. There is no destination to pick; inspect the plan." })
+      el("div", { class: "verdict-title", text: allPass ? "EVA plan: GO · " + passed + " of " + total + " safety checks pass" : "EVA plan: NO-GO · " + passed + " of " + total + " safety checks pass" }),
+      el("div", { class: "verdict-sub", text: (verdictNote.length ? verdictNote.join(" ") + " " : "") + "One pre-planned loop: from the parked rover (the shelter) through five of Curiosity's drill and imaging sites, and back. There is no destination to pick; inspect the plan." })
     ]));
     tab.appendChild(verdict);
 
@@ -367,7 +395,7 @@
       ])])
     ]);
     var tbody = el("tbody");
-    stats.checks.forEach(function (c) {
+    checks.forEach(function (c) {
       var value = typeof c.value === "number" ? fmtNumber(c.value, c.unit === "m" ? 0 : (c.unit === "h" ? 2 : 1)) + " " + c.unit : (c.value || "no data");
       var limit = typeof c.limit === "number" ? "max " + fmtNumber(c.limit, 0) + " " + c.unit : (c.limit || "");
       var labelCell = el("td", {}, [c.label + " ", sourceLink(sources, c.source)]);
@@ -376,7 +404,8 @@
       if (c.flag) { labelCell.appendChild(el("div", { class: "cell-note", text: "Note: " + c.flag })); }
       if (c.id === "daylight") {
         labelCell.appendChild(el("div", { class: "assumption",
-          text: "ASSUMPTION: start 2 h after sunrise, back 2 h before sunset, on sol " + c.sol + "." }));
+          text: "ASSUMPTION: start 2 h after sunrise, back 2 h before sunset" +
+            (typeof c.sol === "number" && isFinite(c.sol) ? ", on sol " + c.sol : "") + "." }));
       }
       tbody.appendChild(el("tr", {}, [labelCell, el("td", { class: "num", text: value }), el("td", { class: "num", text: limit }), el("td", {}, [resultBadge(c.pass)])]));
     });
@@ -438,7 +467,7 @@
   // Elevation profile drawn as inline SVG (no chart library).
   function buildProfile(profile, map) {
     var s = profile.samples;
-    var W = 328, H = 150, padL = 38, padR = 8, padT = 10, padB = 26;
+    var W = 328, H = 150, padL = 54, padR = 8, padT = 10, padB = 26;
     var maxD = s[s.length - 1].d_m;
     var zs = s.map(function (p) { return p.elev_m; });
     var zMin = Math.floor(Math.min.apply(null, zs)), zMax = Math.ceil(Math.max.apply(null, zs));
@@ -467,8 +496,9 @@
     add("path", { d: d, fill: "none", stroke: "#ffb000", "stroke-width": "1.6" });
 
     // Axes labels
-    add("text", { x: 2, y: y(zMax) + 4, class: "axis" }, zMax + " m");
-    add("text", { x: 2, y: y(zMin) + 4, class: "axis" }, zMin + " m");
+    // Right-align elevation labels before the first haven marker.
+    add("text", { x: padL - 8, y: y(zMax) + 4, class: "axis", "text-anchor": "end" }, zMax + " m");
+    add("text", { x: padL - 8, y: y(zMin) + 4, class: "axis", "text-anchor": "end" }, zMin + " m");
     add("line", { x1: padL, x2: W - padR, y1: H - padB, y2: H - padB, stroke: "#263142" });
     add("text", { x: padL, y: H - 8, class: "axis" }, "0");
     add("text", { x: W - padR, y: H - 8, class: "axis", "text-anchor": "end" }, (maxD / 1000).toFixed(2) + " km");
@@ -493,7 +523,8 @@
     // Hover: a dot on the profile and on the map
     var dot = add("circle", { r: 3.5, fill: "#ffffff", stroke: "#0b0f14", cx: -10, cy: -10 });
     var mapDot = L.circleMarker([0, 0], { radius: 6, color: "#0b0f14", weight: 2, fillColor: "#ffffff", fillOpacity: 1, interactive: false });
-    var readout = el("div", { class: "profile-readout", text: "H = rover (haven), 1-5 = stops. Move along the profile to follow the route on the map." });
+    var profileHint = "H = rover (haven), 1-5 = stops. Move along the profile to follow the route on the map.";
+    var readout = el("div", { class: "profile-readout", text: profileHint });
 
     function onMove(evt) {
       var rect = svg.getBoundingClientRect();
@@ -511,7 +542,16 @@
     }
     svg.addEventListener("mousemove", onMove);
     svg.addEventListener("touchmove", onMove, { passive: true });
-    svg.addEventListener("mouseleave", function () { map.removeLayer(mapDot); });
+    // End both pointer and touch inspection without leaving stale values.
+    function clearReadout() {
+      map.removeLayer(mapDot);
+      dot.setAttribute("cx", -10);
+      dot.setAttribute("cy", -10);
+      readout.textContent = profileHint;
+    }
+    svg.addEventListener("mouseleave", clearReadout);
+    svg.addEventListener("touchend", clearReadout);
+    svg.addEventListener("touchcancel", clearReadout);
 
     var wrap = el("div", { class: "profile-wrap" });
     wrap.appendChild(svg);

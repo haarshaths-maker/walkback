@@ -298,6 +298,8 @@ a:hover { color: var(--accent); }
 .leaflet-bar { border: 1px solid var(--line) !important; border-radius: var(--radius) !important; overflow: hidden; box-shadow: none !important; }
 .leaflet-bar a { border-bottom-color: var(--line); }
 .leaflet-bar a:hover { background: var(--surface-2); color: var(--text); }
+/* Keyboard/tap focus keeps the dark button and light text (Leaflet's default turns it light grey). */
+.leaflet-bar a:focus { background: rgba(18, 24, 33, 0.95); color: var(--text); }
 .leaflet-control-scale-line { border: 2px solid var(--text); border-top: none; text-shadow: none; font-family: var(--mono); }
 .leaflet-control-attribution { background: rgba(11, 15, 20, 0.8) !important; color: var(--muted) !important; font-size: 11px; }
 .leaflet-control-attribution a { color: var(--text); }
@@ -523,7 +525,7 @@ svg.profile .axis { fill: var(--muted); font-size: 10.5px; font-family: var(--mo
 .viewer-top { display: flex; justify-content: space-between; align-items: center; color: var(--muted); }
 .viewer-img { max-width: 100%; max-height: calc(100vh - 210px); object-fit: contain; align-self: center; border-radius: 6px; }
 .viewer-title { font-weight: 600; }
-.viewer-meta { color: var(--muted); font-size: 14px; }
+.viewer-meta { color: var(--muted); font-size: 15px; }
 .viewer-nav { display: flex; justify-content: space-between; }
 .viewer-btn {
   min-height: 40px;
@@ -827,6 +829,24 @@ select:focus-visible, input:focus-visible, summary:focus-visible,
   }
 }
 
+/* ---------- 11b. Text size floor (SPEC section 9: body text at least 15 px) ----------
+   Scoped to the tabs and Plan sections that are not in the demo video. The top of the
+   Plan tab (verdict, hero, KPI boxes, the first "Safety checks" fold) is left as it is. */
+#tab-sources .source-list, #tab-sources .source-sub, #tab-sources .assumption, #tab-sources .assume-tag,
+#tab-sources .small-note, #tab-sources a.source, #tab-sources span.source,
+#tab-stops .photo-tag, #tab-stops .photo-count, #tab-stops .photo-credit, #tab-stops .stop-badge,
+#tab-stops .stop-actions a, #tab-stops .assumption, #tab-stops .assume-tag, #tab-stops .small-note,
+#tab-stops .cell-note, #tab-stops .source-sub, #tab-stops a.source, #tab-stops span.source,
+#tab-conditions .small-note, #tab-conditions .assumption, #tab-conditions .assume-tag,
+#tab-conditions .daybar-key, #tab-conditions .cond-card .small-note, #tab-conditions .sol-date,
+#tab-conditions .drill-position, #tab-conditions .result, #tab-conditions a.source, #tab-conditions span.source,
+#tab-plan details.fold ~ details.fold .assumption, #tab-plan details.fold ~ details.fold .assume-tag,
+#tab-plan details.fold ~ details.fold .small-note, #tab-plan details.fold ~ details.fold .profile-readout,
+#tab-plan details.fold ~ details.fold ol.legs, #tab-plan details.fold ~ details.fold a.source,
+#tab-plan details.fold ~ details.fold span.source {
+  font-size: 15px;
+}
+
 /* ---------- 12. Phones and narrow windows ---------- */
 @media (max-width: 1200px) {
   .brand-tagline { display: none; }
@@ -870,7 +890,8 @@ select:focus-visible, input:focus-visible, summary:focus-visible,
   .lbl-short { display: inline; }
   .north-arrow { display: none; }     /* the map is always north-up; the HUD mini-map shows N */
   .leaflet-top { top: 54px; }         /* keep the layer button below the view strip */
-  .leaflet-touch .leaflet-control-zoom { display: none; }   /* pinch to zoom on touch screens */
+  /* Zoom buttons stay on phones too (pinch is not obvious to everyone), at 44 px tap targets. */
+  .leaflet-touch .leaflet-bar a { width: 44px; height: 44px; line-height: 44px; }
   .coord-readout { display: none; }   /* touch screens: tapping the map shows the position in a popup */
 
   /* Tap targets at least 44 px. */
@@ -886,7 +907,7 @@ select:focus-visible, input:focus-visible, summary:focus-visible,
   .legend-block + .legend-block { margin-top: 4px; padding-top: 4px; }
   .legend-swatch { width: 10px; height: 8px; }
   .legend-row { gap: 5px; margin: 1px 0; }
-  .legend-note { display: none; }
+  .legend-note { display: block; }   /* the ASSUMPTION note under the legend is shown on phones too */
   .legend-ramp-labels { font-size: 10px; }
   .legend-ramp-labels span { white-space: nowrap; }
   .leaflet-top .legend { margin: 6px 0 0 8px !important; }
@@ -904,8 +925,9 @@ select:focus-visible, input:focus-visible, summary:focus-visible,
   .intro-title { font-size: clamp(34px, 10vw, 64px); }
   .intro-tagline { font-size: 17px; margin-bottom: 16px; }
   .intro-lead { font-size: 15px; }
-  .intro-lead-2 { font-size: 14px; }
-  .intro-points { font-size: 14px; margin-top: 16px; }
+  .intro-lead-2 { font-size: 15px; }
+  .intro-points { font-size: 15px; margin-top: 16px; }
+  .intro-fine { font-size: 15px; }
   .intro-actions { margin-top: 20px; }
   .intro-start, .intro-helmet { flex: 1 1 auto; }
   .intro-credit { position: static; margin-top: 12px; text-align: left; }
@@ -958,18 +980,18 @@ select:focus-visible, input:focus-visible, summary:focus-visible,
   .hud-br { grid-area: br; }
   .hud-more { display: none; }
   .hud-short { display: inline; }
-  .hud-label { font-size: 12px; letter-spacing: 0.1em; }
+  .hud-label { font-size: 24px; letter-spacing: 0.1em; }   /* SPEC section 9: HUD text at least 24 px */
   .hud-value { font-size: 24px; white-space: normal; overflow-wrap: anywhere; }
-  .hud-sub { font-size: 14px; }
+  .hud-sub { font-size: 24px; }
   .hud-shelter .hud-value { font-size: 40px; white-space: nowrap; }
   .hud-swatch { width: 16px; height: 16px; margin-right: 6px; border-width: 1px; }
-  .hud-alert { grid-area: alert; position: relative; top: auto; left: auto; transform: none; width: auto; white-space: normal; padding: 6px 10px; border-width: 2px; font-size: 15px; z-index: 1; }
+  .hud-alert { grid-area: alert; position: relative; top: auto; left: auto; transform: none; width: auto; white-space: normal; padding: 6px 10px; border-width: 2px; font-size: 24px; z-index: 1; }
   .hud-alert .icon svg { width: 18px; height: 18px; }
-  .hud-science { grid-area: centre; position: relative; top: auto; left: auto; transform: none; align-self: center; justify-self: center; white-space: normal; font-size: 16px; z-index: 1; }
+  .hud-science { grid-area: centre; position: relative; top: auto; left: auto; transform: none; align-self: center; justify-self: center; white-space: normal; font-size: 24px; z-index: 1; }
   .hud-mini-wrap { grid-area: mini; position: relative; bottom: auto; left: auto; transform: none; justify-self: center; width: 88px; height: 88px; z-index: 1; }
   .hud-controls { grid-area: controls; position: relative; left: auto; bottom: auto; transform: none; width: 100%; gap: 8px; z-index: 1; }
-  .hud-btn { min-height: 44px; padding: 4px 14px; font-size: 16px; }
-  .hud-caption { grid-area: caption; position: relative; left: auto; bottom: auto; transform: none; white-space: normal; text-align: center; font-size: 12px; z-index: 1; }
+  .hud-btn { min-height: 44px; padding: 4px 14px; font-size: 24px; }
+  .hud-caption { grid-area: caption; position: relative; left: auto; bottom: auto; transform: none; white-space: normal; text-align: center; font-size: 24px; z-index: 1; }
   .hud-visor::after { display: none; }   /* the visor ring would cut through the readouts */
 }
 /* Phone held sideways: three readouts across the top, mini-map between the bottom two. */
@@ -1010,7 +1032,7 @@ select:focus-visible, input:focus-visible, summary:focus-visible,
 /* The smallest phones (320 px wide): slightly smaller values so the slope
    swatch, angle and class fit on one line. */
 @media (max-width: 360px) {
-  .hud-value { font-size: 20px; }
+  .hud-value { font-size: 24px; }
   .hud-swatch { width: 14px; height: 14px; margin-right: 4px; vertical-align: 0; }
   .hud-bl .hud-value { display: inline; }   /* the angle stays beside its colour swatch */
 }

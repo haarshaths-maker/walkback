@@ -1,6 +1,6 @@
 # AI use
 
-We used AI coding assistants (Claude, by Anthropic) to help write code and documentation and to capture the screen recording used in our demo. The team directed the project, checked the data against NASA sources and made the demo video. No AI-generated images, video or audio are used.
+We used AI coding assistants (Claude, by Anthropic, and GPT through Codex, by OpenAI) to help write code and documentation and to capture the screen recording used in our demo. The team directed the project, checked the data against NASA sources and made the demo video. No AI-generated images, video or audio are used.
 
 ## Log
 
@@ -12,3 +12,4 @@ We used AI coding assistants (Claude, by Anthropic) to help write code and docum
 - 2026-11-16: Claude Code updated docs/PROJECT_PAGE_DRAFT.md for submission (team name, a submit checklist, the AI-use paragraph now covering the demo screen recording, and removed an inaccurate mention of NASA AEGIS as traverse-planning prior work).
 - 2026-11-16: GPT (Codex, OpenAI), run through OpenRig, wrote a fix in js/app.js so the map fits the site when the page first loads while the map is hidden, instead of opening fully zoomed in; Claude Code reviewed it in a browser and committed it.
 - 2026-11-15: Claude helped fill in the Space Apps project page, re-encoded the demo video to 720p and uploaded it to YouTube as Unlisted (https://youtu.be/mG5vUx7IZhw). The video content itself was made by the team; no AI-generated imagery was added.
+- 2026-11-16: Twelve AI agents (six GPT through Codex and OpenRig, six Claude) did a read-only bug hunt of the site, data and pipeline. Six fix agents (three GPT, three Claude Sonnet) then fixed the confirmed bugs that do not change what the demo video shows: shelter minutes along the route (notebooks/pipeline.py, data/profile.json), the helmet view and storm drill (js/hud.js, js/conditions.js), Stops and the photo viewer (js/stops.js), the Plan tab and legends (js/plan.js), the cuff card and welcome screen (js/cuff.js, js/intro.js) and text sizes (css/style.css). Claude Code (Opus 5.5) coordinated, checked the results in a browser and committed them.
