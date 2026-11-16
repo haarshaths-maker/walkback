@@ -4,7 +4,19 @@ Ready to paste into the Space Apps project page. Every number below is copied fr
 
 Items marked **TEAM** need a human decision before pasting.
 
+## Before you press Submit
+
+1. Log in at https://www.spaceappschallenge.org, open team **Astrophoenix**, and create or edit the project.
+2. Copy each section below into the box with the same name. If the form has a box that is not here, ask for the text.
+3. Upload the demo video to YouTube as **Unlisted**, add `WALKBACK_subtitles.srt` under Subtitles (English subtitles are required), and paste the link into **Link to Project Demo**. Check it plays in a private browser window.
+4. Fill every **TEAM** item, then save as a draft and read the whole page once before submitting.
+5. After submitting: create a GitHub release named `v1`, and do not change the live site after the deadline.
+
 ---
+
+## Team
+
+Astrophoenix
 
 ## Project Name
 
@@ -34,7 +46,7 @@ https://haarshaths-maker.github.io/walkback/ (code: https://github.com/haarshath
 
 **Checks against reality.** We laid Curiosity's actual path across the site over our slope map: 93.5% of it lies on ground under 20°, with a median slope of 11.6°. The few readings above 20° (the steepest is 51.9°) occur where the mapped rover path passes within about a metre of a ridge wall; rover positions and the elevation model are each accurate to roughly a metre. We also re-downloaded NASA's source files and confirmed that every stop position matches Curiosity's waypoint file exactly, that the rover was parked at our three drill stops on the days it drilled, and that all 318 sols of our weather replay match the REMS feed; the app lists these checks in its Sources tab.
 
-**Benefits.** The method follows the steps NASA's Artemis teams use to plan Moonwalks, applied to Mars with data from the site itself. To our knowledge it is the first public tool to map minutes-to-shelter on a metre-scale Mars elevation model at a rover-verified site; least-cost traverse planning itself builds on earlier work such as MIT's SEXTANT and NASA's AEGIS. The same engine works for any place with an elevation model, including search-and-rescue and wildfire routes on Earth.
+**Benefits.** The method follows the steps NASA's Artemis teams use to plan Moonwalks, applied to Mars with data from the site itself. To our knowledge it is the first public tool to map minutes-to-shelter on a metre-scale Mars elevation model at a rover-verified site; least-cost traverse planning itself builds on earlier work such as MIT's SEXTANT. The same engine works for any place with an elevation model, including search-and-rescue and wildfire routes on Earth.
 
 **Limits.** See the Assumptions and Limitations paragraph below; they are also listed inside the app.
 
@@ -61,7 +73,7 @@ https://haarshaths-maker.github.io/walkback/ (code: https://github.com/haarshath
 
 ## Use of Artificial Intelligence
 
-We used AI coding assistants (Claude and Claude Code, by Anthropic) to help write the code and documentation and to help find and check data sources. The team directed the project, ran the data notebook, tested every feature, and checked the numbers against their NASA sources. No AI-generated images, video or audio are used: every picture is a NASA photograph or a map drawn from NASA data. No NASA logos or mission emblems are used.
+We used AI coding assistants (Claude and Claude Code, by Anthropic) to help write the code and documentation, to help find and check data sources, and to capture the silent screen recording of our real site used in the demo video. The team directed the project, ran the data notebook, tested every feature, checked the numbers against their NASA sources, and recorded the voiceover. No AI-generated images, video or audio are used: every picture is a NASA photograph, a NASA map tile or a screen capture of our site. No NASA logos or mission emblems are used.
 
 **TEAM:** if you use ChatGPT (or any other AI) to shorten this page, add one sentence naming it and what it did. Edit the "team" sentence if any part of it is not true.
 
