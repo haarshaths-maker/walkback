@@ -95,5 +95,53 @@
     "credit": "NASA/JPL-Caltech/Univ. of Arizona",
     "source_url": "https://images.nasa.gov/details/PIA26306",
     "note": "NASA's caption describes these as ridges similar to the ones Curiosity studied up close in 2025; it does not say they are inside our site."
+  },
+  {
+    "id": "img9",
+    "file": "img/rover_park_navcam_sol4534.jpg",
+    "stop": "HAVEN",
+    "exact_location": true,
+    "title": "View from the Rover Park parking spot, with part of the rover in front",
+    "camera": "Left Navcam",
+    "sol": 4534,
+    "date": "2025-05-08",
+    "credit": "NASA/JPL-Caltech",
+    "source_url": "https://mars.nasa.gov/raw_images/1464398/"
+  },
+  {
+    "id": "img10",
+    "file": "img/altadena_navcam_sol4560.jpg",
+    "stop": "S1",
+    "exact_location": true,
+    "title": "Ground around the Altadena parking spot",
+    "camera": "Left Navcam",
+    "sol": 4560,
+    "date": "2025-06-04",
+    "credit": "NASA/JPL-Caltech",
+    "source_url": "https://mars.nasa.gov/raw_images/1474400/"
+  },
+  {
+    "id": "img11",
+    "file": "img/first_ridge_navcam_sol4605.jpg",
+    "stop": "S2",
+    "exact_location": true,
+    "title": "View from the First ridge parking spot",
+    "camera": "Left Navcam",
+    "sol": 4605,
+    "date": "2025-07-20",
+    "credit": "NASA/JPL-Caltech",
+    "source_url": "https://mars.nasa.gov/raw_images/1491691/"
+  },
+  {
+    "id": "img12",
+    "file": "img/ridge_overlook_navcam_sol4816.jpg",
+    "stop": "S5",
+    "exact_location": true,
+    "title": "Pale boxwork ridge and rover tracks at the Ridge overlook parking spot",
+    "camera": "Left Navcam",
+    "sol": 4816,
+    "date": "2026-02-22",
+    "credit": "NASA/JPL-Caltech",
+    "source_url": "https://mars.nasa.gov/raw_images/1553668/"
   }
 ]

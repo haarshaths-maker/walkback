@@ -13,7 +13,7 @@ Student project. Not affiliated with or endorsed by NASA.
 ## What is in the app
 
 - **Plan:** the route, minutes to shelter, totals (distance, time, climb, dose), five pass/fail safety checks with sources, a ground-truth check against Curiosity's real path, the legs, an elevation profile, and a printable one-page cuff card.
-- **Stops:** one card per stop with a NASA rover photo, the objective, what Curiosity found there, planned science time and arrival time.
+- **Stops:** one card per stop with a NASA rover photo taken at that stop, the objective, what Curiosity found there, planned science time and arrival time.
 - **Conditions:** weather Curiosity measured here (a replay, not a forecast), the EVA daylight window, radiation, and the solar storm drill.
 - **Sources:** where every limit comes from, data credits, how we checked the data against NASA's own files, earlier work we built on, and limitations.
 - **Welcome screen:** what the project is and how to explore it (reopen it with **About**).

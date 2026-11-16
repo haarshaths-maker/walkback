@@ -53,6 +53,12 @@ Shown on the stop cards, in the HUD and on the welcome screen. Downloaded from N
 - img6: Low fractured boxwork ridge (PIA26558). NASA/JPL-Caltech/MSSS. https://www.nasa.gov/?p=879744
 - img7: Boxwork region seen from a distance (PIA26560). NASA/JPL-Caltech/MSSS. https://www.nasa.gov/?p=879744
 - img8: HiRISE Views Mount Sharp's Boxwork (PIA26306), captured 10 Dec 2006, welcome-screen background. NASA/JPL-Caltech/Univ. of Arizona. https://images.nasa.gov/details/PIA26306 (NASA's caption describes these as ridges similar to the ones Curiosity studied; it does not place them inside our site, and neither do we.)
+- img9: View from the Rover Park parking spot, Left Navcam, sol 4534 (8 May 2025). NASA/JPL-Caltech. Curiosity raw image NLB_800007980EDR_F1160000NCAM00280M_. https://mars.nasa.gov/raw_images/1464398/
+- img10: Ground around the Altadena parking spot, Left Navcam, sol 4560 (4 Jun 2025). NASA/JPL-Caltech. Curiosity raw image NLB_802308448EDR_F1161944NCAM00265M_. https://mars.nasa.gov/raw_images/1474400/
+- img11: View from the First ridge parking spot, Left Navcam, sol 4605 (20 Jul 2025). NASA/JPL-Caltech. Curiosity raw image NLB_806306207EDR_F1172538NCAM00264M_. https://mars.nasa.gov/raw_images/1491691/
+- img12: Pale boxwork ridge and rover tracks at the Ridge overlook parking spot, Left Navcam, sol 4816 (22 Feb 2026). NASA/JPL-Caltech. Curiosity raw image NLB_825029235EDR_F1201546NCAM00292M_. https://mars.nasa.gov/raw_images/1553668/
+
+img9 to img12 come from NASA's Curiosity raw image archive (mars.nasa.gov/raw_images), downloaded on 16 Nov 2026 and re-saved as JPEG at full size (1024 x 1024 px). Each was taken on the sol Curiosity arrived at that stop, after its last drive of the sol (the drive ends at the stop position in NASA's waypoint file), so it shows the view from the stop itself.
 
 ## Software and tools
 

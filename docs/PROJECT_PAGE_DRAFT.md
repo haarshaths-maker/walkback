@@ -48,7 +48,7 @@ https://haarshaths-maker.github.io/walkback/ (code: https://github.com/haarshath
 - Curiosity RAD (Hassler et al., 2014; NASA/JPL 2024 solar storm report): dose rate and storm scenario.
 - Curiosity REMS weather feed: temperature, pressure, UV, sunrise and sunset for sols 4534–4860.
 - Curiosity traverse and waypoint files (JPL MMGIS): stop positions and the ground-truth check.
-- NASA rover image releases and the Curiosity mission blog: point-of-view photos and drill results.
+- NASA rover image releases, Curiosity's raw image archive and the mission blog: a photo taken at every stop, and the drill results.
 - NASA Technical Reports on the xEVA suit and Artemis EVA planning: the limits our checks enforce.
 
 ## Space Agency Partner & Other Data
