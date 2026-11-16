@@ -275,7 +275,14 @@
     WALKBACK.map = buildMap(config, stops);
 
     // Tell the other scripts (plan.js and later) that the map is ready.
-    document.dispatchEvent(new CustomEvent("walkback:ready"));
+    // If the page is still loading (a later script is still downloading),
+    // wait until every script has run, so none of them misses the event.
+    function announceReady() { document.dispatchEvent(new CustomEvent("walkback:ready")); }
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", announceReady);
+    } else {
+      announceReady();
+    }
   }).catch(function (error) {
     console.error(error);
     showMapMessage(

@@ -605,7 +605,13 @@
       fitToRoute(map, route);
       buildPlanTab(stats, route, profile, sources, map);
       addClickPopup(map);
-      document.dispatchEvent(new CustomEvent("walkback:plan-ready"));
+      // Same safeguard as app.js: wait for every script to have run first.
+      var announcePlan = function () { document.dispatchEvent(new CustomEvent("walkback:plan-ready")); };
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", announcePlan);
+      } else {
+        announcePlan();
+      }
     }).catch(function (err) {
       console.error(err);
       var tab = document.getElementById("tab-plan");
