@@ -12,3 +12,4 @@ Each code file starts with a one-line comment noting that it was AI-assisted.
 - 2026-11-14 to 2026-11-15: AI assistants helped write the website code (index.html, css/, js/) and the documentation.
 - 2026-11-16: Claude Code helped polish the interface and fix layout bugs.
 - 2026-11-16: Claude Code helped find a Curiosity Navcam photo taken at each stop that lacked one (Rover Park, Altadena, First ridge, Ridge overlook) in NASA's raw image archive, matched by sol to NASA's waypoint file, and added them to data/images.json, data/stops.json, docs/SPEC.md and CREDITS.md.
+- 2026-11-16: Claude Code captured a silent 30-second screen recording of the site (a scripted browser session, not generated imagery) and a subtitle file for the team's demo video; the team adds the voiceover.
