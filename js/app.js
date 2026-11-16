@@ -57,18 +57,12 @@
       });
     });
 
-    // Placeholder text until later build steps fill the tabs in.
-    // (plan.js replaces the Plan tab text once the route data loads.)
-    var notes = {
-      "tab-plan": "Loading the route...",
-      "tab-stops": "A card for each science stop, with rover photos, appears here.",
-      "tab-conditions": "Weather measured by Curiosity, radiation dose and the solar storm drill appear here.",
-      "tab-sources": "Data credits, the sources of every limit, and the limitations of this tool appear here."
-    };
-    Object.keys(notes).forEach(function (id) {
+    // "Loading..." in every tab until its script has loaded the data and
+    // replaced it with the real content.
+    ["tab-plan", "tab-stops", "tab-conditions", "tab-sources"].forEach(function (id) {
       var p = document.createElement("p");
       p.className = "placeholder";
-      p.textContent = notes[id];
+      p.textContent = "Loading...";
       document.getElementById(id).appendChild(p);
     });
   }
@@ -130,11 +124,12 @@
     });
     (defaultLayer || baseLayers[Object.keys(baseLayers)[0]]).addTo(map);
 
-    // ---- Site outline: thin dashed amber rectangle ----
+    // ---- Site outline: thin, faint dashed amber rectangle ----
     L.rectangle(siteBounds, {
       color: "#ffb000",
-      weight: 1.5,
-      dashArray: "6 6",
+      weight: 1,
+      opacity: 0.5,
+      dashArray: "4 6",
       fill: false,
       interactive: false
     }).addTo(map);
@@ -142,6 +137,22 @@
     // ---- Stop markers ----
     // HAVEN is a square amber marker with a shelter symbol; science stops are
     // round and numbered in visiting order. Shape differs as well as colour.
+    //
+    // Stops 3 and 4 are only about 19 m apart, so when the map is zoomed out
+    // their markers would sit on top of each other. Below zoom level
+    // SPLIT_ZOOM we nudge the two markers apart on screen by NUDGE_PX pixels.
+    // Only the drawing moves: their real positions (stops.json) never change.
+    var SPLIT_ZOOM = 17;
+    var NUDGE_PX = 11;
+    var nudged = [];   // [marker, html, size, direction] for stops 3 and 4
+    function makeIcon(html, size, shift) {
+      return L.divIcon({
+        className: "",                     // no default Leaflet icon styling
+        html: html,
+        iconSize: [size, size],
+        iconAnchor: [size / 2 + shift, size / 2 + shift]
+      });
+    }
     var stopLayer = L.layerGroup();
     var scienceNumber = 0;
     stops.forEach(function (stop) {
@@ -155,25 +166,32 @@
         scienceNumber += 1;
         html = '<div class="stop-marker" aria-hidden="true">' + scienceNumber + "</div>";
       }
-      var size = isHaven ? 32 : 28;
+      var size = isHaven ? 30 : 26;
       var marker = L.marker([stop.lat, stop.lon], {
-        icon: L.divIcon({
-          className: "",                     // no default Leaflet icon styling
-          html: html,
-          iconSize: [size, size],
-          iconAnchor: [size / 2, size / 2]
-        }),
+        icon: makeIcon(html, size, 0),
         title: stop.name,
         alt: stop.name,
         keyboard: true
       });
       marker.bindTooltip(
-        (isHaven ? "" : scienceNumber + ". ") + stop.name,
+        isHaven ? stop.name + ": start and end of the walk" : scienceNumber + ". " + stop.name,
         { direction: "top", offset: [0, -size / 2] }
       );
+      // Stop 3 is nudged up-left, stop 4 down-right (see SPLIT_ZOOM above).
+      if (scienceNumber === 3 && !isHaven) { nudged.push([marker, html, size, 1]); }
+      if (scienceNumber === 4 && !isHaven) { nudged.push([marker, html, size, -1]); }
       marker.addTo(stopLayer);
     });
     stopLayer.addTo(map);
+
+    function updateNudge() {
+      var split = map.getZoom() < SPLIT_ZOOM;
+      nudged.forEach(function (n) {
+        n[0].setIcon(makeIcon(n[1], n[2], split ? n[3] * NUDGE_PX : 0));
+      });
+    }
+    map.on("zoomend", updateNudge);
+    updateNudge();
 
     // ---- Controls ----
     // Layer switcher, top right. Base maps are radio buttons; overlays are tick boxes.
@@ -196,7 +214,7 @@
       readout.textContent = formatLatLon(event.latlng.lat, event.latlng.lng);
     });
     map.on("mouseout", function () {
-      readout.textContent = "Move the pointer over the map";
+      readout.textContent = "";   // an empty readout is hidden by the CSS
     });
     // On touch screens there is no pointer, so show the tapped position.
     map.on("click", function (event) {
@@ -205,6 +223,9 @@
 
     // Keep the map filling its box when the window changes size.
     window.addEventListener("resize", function () { map.invalidateSize(); });
+    window.addEventListener("orientationchange", function () {
+      setTimeout(function () { map.invalidateSize(); }, 200);
+    });
 
     return map;
   }

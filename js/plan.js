@@ -114,8 +114,11 @@
 
   // A legend box that shows the key for whichever overlays are switched on.
   function addLegend(map, overlays, layers) {
+    // On phones the bottom of the small map is busy with the route, so the
+    // legend goes to the top-left corner, under the view buttons.
+    var isSmall = window.matchMedia && window.matchMedia("(max-width: 800px)").matches;
     var LegendControl = L.Control.extend({
-      options: { position: "bottomleft" },
+      options: { position: isSmall ? "topleft" : "bottomleft" },
       onAdd: function () {
         this._div = L.DomUtil.create("div", "legend");
         this._div.setAttribute("role", "region");
@@ -133,12 +136,28 @@
             if (!layers[key] || !map.hasLayer(layers[key])) { return; }
             any = true;
             var block = el("div", { class: "legend-block" }, [el("div", { class: "legend-title", text: pair[1] })]);
-            (overlays[key].legend || []).forEach(function (item) {
-              block.appendChild(el("div", { class: "legend-row" }, [
-                el("span", { class: "legend-swatch", style: "background:" + item.color, "aria-hidden": "true" }),
-                el("span", { text: item.label })
+            var items = overlays[key].legend || [];
+            if (key === "walkback" && items.length > 1) {
+              // The minutes ramp is continuous, so draw it as one colour bar
+              // with the first, middle and last labels underneath.
+              var stopsCss = items.map(function (it, i) {
+                return it.color + " " + (i / (items.length - 1) * 100).toFixed(0) + "%";
+              }).join(", ");
+              block.appendChild(el("div", { class: "legend-ramp", style: "background: linear-gradient(90deg, " + stopsCss + ")", "aria-hidden": "true" }));
+              var mid = items[Math.floor(items.length / 2)];
+              block.appendChild(el("div", { class: "legend-ramp-labels" }, [
+                el("span", { text: items[0].label }),
+                el("span", { text: mid.label }),
+                el("span", { text: items[items.length - 1].label })
               ]));
-            });
+            } else {
+              items.forEach(function (item) {
+                block.appendChild(el("div", { class: "legend-row" }, [
+                  el("span", { class: "legend-swatch", style: "background:" + item.color, "aria-hidden": "true" }),
+                  el("span", { text: item.label })
+                ]));
+              });
+            }
             if (overlays[key].note) {
               block.appendChild(el("div", { class: "legend-note", text: "ASSUMPTION: " + overlays[key].note }));
             }
@@ -159,7 +178,7 @@
     curiosity.features.forEach(function (f) {
       if (f.geometry.type === "LineString") {
         L.polyline(f.geometry.coordinates.map(function (c) { return [c[1], c[0]]; }), {
-          color: "#38d6ff", weight: 2.5, opacity: 0.9, interactive: false   // solid cyan so it is easy to see
+          color: "#38d6ff", weight: 2, opacity: 0.75, interactive: false   // thin solid cyan: visible, but the route stays on top
         }).addTo(group);
       } else if (f.geometry.type === "Point") {
         var c = f.geometry.coordinates;
@@ -225,10 +244,10 @@
   // (top right) still allows any combination.
 
   var VIEWS = [
-    { id: "route", label: "Route", layer: null, hint: "Satellite image with the planned route" },
-    { id: "slope", label: "Slope", layer: "slope", hint: "How steep every square metre is; red is too steep to walk" },
     { id: "walkback", label: "Minutes to shelter", short: "Shelter", layer: "walkback", hint: "Walking minutes back to the rover from any point" },
-    { id: "ortho", label: "Colour", layer: "ortho", hint: "HiRISE colour image of the site" }
+    { id: "slope", label: "Slope", layer: "slope", hint: "How steep every square metre is; red is too steep to walk" },
+    { id: "ortho", label: "Photo", layer: "ortho", hint: "HiRISE colour image of the site" },
+    { id: "route", label: "Route only", short: "Route", layer: null, hint: "Satellite image with the planned route" }
   ];
 
   function addViewButtons(map, layers) {
@@ -272,7 +291,31 @@
     map.on("overlayadd overlayremove", syncButtons);
 
     WALKBACK.setMapView = setView;
-    setView("slope");   // start on the slope view: it shows why the route goes where it goes
+    setView("walkback");   // start on the signature view: minutes back to shelter from every point
+  }
+
+  // Zoom the map so the planned route fills it (the whole site box leaves
+  // the route small on phones). Extra room at the top keeps the route clear
+  // of the view buttons. If the window changes size before anyone has moved
+  // the map, fit again.
+  function fitToRoute(map, route) {
+    var bounds = L.latLngBounds([]);
+    route.features.forEach(function (f) {
+      f.geometry.coordinates.forEach(function (c) { bounds.extend([c[1], c[0]]); });
+    });
+    if (!bounds.isValid()) { return; }
+    var userMoved = false;   // becomes true once a person pans or zooms
+    var fitting = false;     // true while we move the map ourselves
+    function fit() {
+      map.fitBounds(bounds, { paddingTopLeft: [24, 72], paddingBottomRight: [24, 24], animate: false });
+    }
+    fit();
+    // Only count moves made by a person (drag, wheel, buttons), not our own fit.
+    map.on("dragstart zoomstart", function () { if (!fitting) { userMoved = true; } });
+    window.addEventListener("resize", function () {
+      if (userMoved) { return; }
+      fitting = true; fit(); fitting = false;
+    });
   }
 
   // ------------------------------------------------------------------
@@ -290,8 +333,8 @@
     var verdict = el("div", { class: "verdict " + (allPass ? "is-pass" : "is-fail") });
     verdict.appendChild(WALKBACK.icon(allPass ? "check" : "alert"));
     verdict.appendChild(el("div", {}, [
-      el("div", { class: "verdict-title", text: allPass ? "All " + total + " safety checks pass" : (total - passed) + " of " + total + " safety checks fail" }),
-      el("div", { class: "verdict-sub", text: "A loop from the parked rover through five of Curiosity's drill and imaging sites, and back." })
+      el("div", { class: "verdict-title", text: allPass ? "EVA plan: GO · " + passed + " of " + total + " safety checks pass" : "EVA plan: NO-GO · " + (total - passed) + " of " + total + " safety checks fail" }),
+      el("div", { class: "verdict-sub", text: "One pre-planned loop: from the parked rover (the shelter) through five of Curiosity's drill and imaging sites, and back. There is no destination to pick; inspect the plan." })
     ]));
     tab.appendChild(verdict);
 
@@ -313,11 +356,8 @@
     ]);
     tab.appendChild(kpis);
 
-    // Actions: show the signature layer; cuff.js adds the print button here too.
+    // Actions: cuff.js adds the "Print cuff card" button here.
     var actions = el("div", { class: "plan-actions", id: "plan-actions" });
-    var showShelter = el("button", { type: "button", class: "btn btn-primary", text: "Show minutes to shelter on the map" });
-    showShelter.addEventListener("click", function () { if (WALKBACK.setMapView) { WALKBACK.setMapView("walkback"); } });
-    actions.appendChild(showShelter);
     tab.appendChild(actions);
 
     // (3) Safety checks
@@ -522,6 +562,7 @@
       addCuriosity(map, curiosity);
       addRoute(map, route);
       addViewButtons(map, layers);
+      fitToRoute(map, route);
       buildPlanTab(stats, route, profile, sources, map);
       addClickPopup(map);
       document.dispatchEvent(new CustomEvent("walkback:plan-ready"));

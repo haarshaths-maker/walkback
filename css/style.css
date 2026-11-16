@@ -35,8 +35,8 @@
   --muted: #9aa7b6;     /* secondary text (contrast above 4.5:1 on the panel) */
 
   --topbar-h: 56px;
-  --panel-w: 380px;
-  --radius: 10px;
+  --panel-w: 400px;
+  --radius: 6px;
   --font: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   --mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
 }
@@ -54,8 +54,22 @@ html, body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* Numbers line up in columns and do not jump as they change. */
-.kpi-value, .totals dd, table.checks td.num, .stop-facts dd, .drill-shelter, .hud-value { font-variant-numeric: tabular-nums; }
+/* Numbers are set in the mono face with fixed-width digits, like an
+   instrument readout: they line up in columns and do not jump as they change. */
+.kpi-value, .totals dd, table.checks td.num, .stop-facts dd, .drill-shelter, .hud-value {
+  font-family: var(--mono);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Small "ops console" labels: mono, uppercase, spaced out, muted. */
+.kpi-label, .tab-body h3, details.fold > summary, table.checks th, .legend-title, .stop-label, .drill-label {
+  font-family: var(--mono);
+  font-size: 11.5px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
 
 a { color: var(--text); text-underline-offset: 2px; }
 a:hover { color: var(--accent); }
@@ -75,12 +89,20 @@ a:hover { color: var(--accent); }
 .brand-name { font-weight: 700; letter-spacing: 0.14em; font-size: 18px; }
 .brand-tagline { color: var(--muted); font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .topbar-right { display: flex; align-items: center; gap: 10px; flex: 0 0 auto; }
-.site-label { color: var(--muted); font-size: 13px; white-space: nowrap; margin-right: 6px; }
+.site-label {
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: 11.5px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  margin-right: 8px;
+}
 
 .topbar-btn, .hud-open-btn {
   min-height: 36px;
   padding: 6px 14px;
-  border-radius: 8px;
+  border-radius: var(--radius);
   font: inherit;
   font-size: 14px;
   font-weight: 600;
@@ -88,8 +110,8 @@ a:hover { color: var(--accent); }
 }
 .topbar-btn { background: transparent; color: var(--text); border: 1px solid var(--line); }
 .topbar-btn:hover { background: var(--surface); }
-.hud-open-btn { background: transparent; color: var(--accent); border: 1px solid var(--accent); }
-.hud-open-btn:hover { background: var(--accent); color: var(--bg); }
+.hud-open-btn { background: var(--accent); color: var(--bg); border: 1px solid var(--accent); }
+.hud-open-btn:hover { background: #ffc233; border-color: #ffc233; }
 .hud-open-btn:disabled { opacity: 0.4; cursor: default; }
 
 .layout { display: flex; height: calc(100% - var(--topbar-h)); }
@@ -123,9 +145,9 @@ a:hover { color: var(--accent); }
 .tab:hover { color: var(--text); }
 .tab.is-active { color: var(--text); border-bottom-color: var(--accent); }
 
-.tab-body { flex: 1 1 auto; overflow-y: auto; padding: 18px; min-height: 0; }
+.tab-body { flex: 1 1 auto; overflow-y: auto; padding: 16px; min-height: 0; }
 .tab-body[hidden] { display: none; }
-.tab-body h3 { font-size: 15px; font-weight: 600; margin: 22px 0 8px; }
+.tab-body h3 { margin: 24px 0 8px; }
 .tab-body h3:first-child { margin-top: 0; }
 .placeholder { color: var(--muted); }
 
@@ -148,7 +170,7 @@ a:hover { color: var(--accent); }
   background: var(--surface);
   color: var(--text);
   border: 1px solid var(--line);
-  border-radius: 8px;
+  border-radius: var(--radius);
   font: inherit;
   font-size: 14px;
   font-weight: 600;
@@ -163,27 +185,29 @@ a:hover { color: var(--accent); }
 .north-arrow {
   position: absolute;
   left: 14px;
-  top: 14px;
+  top: 16px;
   z-index: 500;
   pointer-events: none;
   filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.8));
 }
+.north-arrow svg { width: 24px; height: 31px; }
 
 .coord-readout {
   position: absolute;
   left: 50%;
-  bottom: 12px;
+  bottom: 24px;
   transform: translateX(-50%);
   z-index: 500;
-  padding: 4px 10px;
-  background: rgba(11, 15, 20, 0.85);
-  border: 1px solid var(--line);
-  border-radius: 6px;
+  padding: 2px 8px;
+  background: rgba(11, 15, 20, 0.8);
+  border-radius: 4px;
+  color: var(--muted);
   font-family: var(--mono);
-  font-size: 12.5px;
+  font-size: 11.5px;
   white-space: nowrap;
   pointer-events: none;
 }
+.coord-readout:empty { display: none; }
 
 .map-message {
   position: absolute;
@@ -208,10 +232,9 @@ a:hover { color: var(--accent); }
   display: flex;
   gap: 2px;
   padding: 3px;
-  background: rgba(11, 15, 20, 0.88);
+  background: rgba(11, 15, 20, 0.92);
   border: 1px solid var(--line);
-  border-radius: 10px;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.45);
+  border-radius: var(--radius);
   max-width: calc(100% - 140px);
 }
 .view-btn {
@@ -220,7 +243,7 @@ a:hover { color: var(--accent); }
   background: transparent;
   color: var(--muted);
   border: 0;
-  border-radius: 7px;
+  border-radius: 4px;
   font: inherit;
   font-size: 13.5px;
   font-weight: 600;
@@ -228,14 +251,15 @@ a:hover { color: var(--accent); }
   cursor: pointer;
 }
 .view-btn:hover { color: var(--text); background: var(--surface); }
-.view-btn.is-active { background: var(--text); color: var(--bg); }
+.view-btn.is-active { background: var(--surface-2); color: var(--text); box-shadow: inset 0 -2px 0 var(--accent); }
+.lbl-short { display: none; }
 
 /* Stop markers (drawn with CSS, no image files). Square = shelter, round = science stop. */
 .stop-marker {
   display: grid;
   place-items: center;
-  width: 28px;
-  height: 28px;
+  width: 26px;
+  height: 26px;
   border-radius: 50%;
   background: var(--bg);
   color: var(--text);
@@ -245,9 +269,9 @@ a:hover { color: var(--accent); }
   box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.55);
 }
 .stop-marker.is-haven {
-  width: 32px;
-  height: 32px;
-  border-radius: 7px;
+  width: 30px;
+  height: 30px;
+  border-radius: 5px;
   background: var(--accent);
   color: var(--bg);
   border-color: var(--bg);
@@ -264,12 +288,14 @@ a:hover { color: var(--accent); }
   color: var(--text);
   border-color: var(--line);
 }
-.leaflet-control-layers { border: 1px solid var(--line); border-radius: 10px; box-shadow: 0 4px 14px rgba(0, 0, 0, 0.45); }
+.leaflet-control-layers { border: 1px solid var(--line) !important; border-radius: var(--radius); box-shadow: none !important; }
 .leaflet-control-layers-expanded { padding: 10px 14px; }
 .leaflet-control-layers label { margin: 5px 0; font-size: 13.5px; }
 .leaflet-control-layers-separator { border-top-color: var(--line); }
-.leaflet-control-layers-toggle { background-color: var(--text); border-radius: 9px; }
-.leaflet-bar { border: 1px solid var(--line) !important; border-radius: 9px !important; overflow: hidden; }
+/* Dark layer-switcher button: Leaflet's dark icon is turned light with invert(). */
+.leaflet-control-layers-toggle { background-color: var(--panel); border-radius: var(--radius); filter: invert(1) hue-rotate(180deg); }
+.leaflet-control-layers-expanded .leaflet-control-layers-toggle { filter: none; }
+.leaflet-bar { border: 1px solid var(--line) !important; border-radius: var(--radius) !important; overflow: hidden; box-shadow: none !important; }
 .leaflet-bar a { border-bottom-color: var(--line); }
 .leaflet-bar a:hover { background: var(--surface-2); color: var(--text); }
 .leaflet-control-scale-line { border: 2px solid var(--text); border-top: none; text-shadow: none; font-family: var(--mono); }
@@ -291,15 +317,16 @@ a:hover { color: var(--accent); }
 .legend {
   background: rgba(18, 24, 33, 0.95);
   border: 1px solid var(--line);
-  border-radius: 10px;
+  border-radius: var(--radius);
   padding: 10px 12px;
   font-size: 12.5px;
-  max-width: 240px;
+  width: 220px;
   margin-bottom: 40px !important;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.45);
 }
 .legend-block + .legend-block { margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--line); }
-.legend-title { font-weight: 600; margin-bottom: 4px; }
+.legend-title { margin-bottom: 6px; }
+.legend-ramp { height: 10px; border-radius: 2px; border: 1px solid rgba(0, 0, 0, 0.5); }
+.legend-ramp-labels { display: flex; justify-content: space-between; margin-top: 3px; font-family: var(--mono); font-size: 11.5px; color: var(--text); }
 .legend-row { display: flex; align-items: center; gap: 8px; margin: 2px 0; }
 .legend-swatch { width: 14px; height: 10px; border-radius: 2px; border: 1px solid rgba(0, 0, 0, 0.5); flex: 0 0 auto; }
 .legend-note { margin-top: 6px; font-size: 12px; color: var(--muted); }
@@ -341,8 +368,7 @@ details.fold > summary {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 14px 0;
-  font-weight: 600;
+  padding: 16px 0;
   cursor: pointer;
   list-style: none;
 }
@@ -362,51 +388,60 @@ details.fold > summary:hover { color: var(--accent); }
 .fold-body { padding-bottom: 16px; }
 
 /* Definition lists (totals, weather) */
+/* Label on the left (wraps if it must), value on the right (kept on one line). */
 .totals { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px 14px; margin: 0; }
 .totals dt { color: var(--muted); }
-.totals dd { margin: 0; text-align: right; font-weight: 500; }
-.totals dd .assumption { max-width: 220px; margin-left: auto; text-align: right; }
+.totals dd { margin: 0; text-align: right; font-weight: 500; white-space: nowrap; }
+.totals dd .assumption { width: 190px; margin-left: auto; text-align: right; white-space: normal; font-family: var(--font); }
 
 /* ---------- 5. Plan tab ---------- */
+/* The verdict: a flat card with a coloured edge, a word and an icon. */
 .verdict {
   display: flex;
-  gap: 12px;
+  gap: 10px;
   align-items: flex-start;
-  padding: 14px;
+  padding: 12px 14px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-left: 3px solid;
   border-radius: var(--radius);
-  border: 1px solid;
 }
-.verdict.is-pass { background: rgba(61, 220, 151, 0.08); border-color: rgba(61, 220, 151, 0.35); }
-.verdict.is-fail { background: rgba(255, 92, 92, 0.08); border-color: rgba(255, 92, 92, 0.4); }
-.verdict > .icon {
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
-  align-items: center;
-  justify-content: center;
-  margin-top: 1px;
-}
-.verdict.is-pass > .icon { background: var(--pass); color: var(--bg); }
-.verdict.is-fail > .icon { background: var(--fail); color: var(--bg); }
-.verdict-title { font-weight: 600; font-size: 16px; }
+.verdict.is-pass { border-left-color: var(--pass); }
+.verdict.is-fail { border-left-color: var(--fail); }
+.verdict > .icon { margin-top: 3px; }
+.verdict > .icon svg { width: 16px; height: 16px; }
+.verdict.is-pass > .icon { color: var(--pass); }
+.verdict.is-fail > .icon { color: var(--fail); }
+.verdict-title { font-weight: 600; font-size: 15px; }
 .verdict-sub { color: var(--muted); font-size: 14px; margin-top: 2px; }
 
-.kpis { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin-top: 12px; }
-.kpi { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 10px 12px; }
-.kpi-hero { grid-column: 1 / -1; padding: 14px 16px; }
-.kpi-label { color: var(--muted); font-size: 12.5px; }
-.kpi-value { font-size: 19px; font-weight: 600; margin-top: 2px; white-space: nowrap; }
-.kpi-hero .kpi-label { font-size: 14px; color: var(--text); }
-.kpi-hero .kpi-value { font-size: 44px; font-weight: 600; line-height: 1.1; letter-spacing: -0.01em; }
-.kpi-unit { font-size: 0.55em; font-weight: 500; color: var(--muted); }
+/* Key numbers: one large headline figure, then one strip of three cells
+   divided by thin lines (an instrument panel, not floating tiles). */
+.kpis {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin-top: 12px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+}
+.kpi { padding: 10px 12px; min-width: 0; }
+.kpi + .kpi + .kpi, .kpi:nth-child(4) { border-left: 1px solid var(--line); }
+.kpi:nth-child(n+2) { border-top: 1px solid var(--line); }
+.kpi-hero { grid-column: 1 / -1; padding: 14px 16px 16px; }
+.kpi-label { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.kpi-value { font-size: 18px; font-weight: 500; margin-top: 4px; white-space: nowrap; }
+.kpi-hero .kpi-label { color: var(--text); }
+.kpi-hero .kpi-value { font-size: 44px; font-weight: 500; line-height: 1.1; letter-spacing: -0.02em; }
+.kpi-unit { font-size: 0.6em; font-weight: 400; color: var(--muted); }
 .kpi-hero .kpi-unit { font-size: 18px; }
-.kpi-note { color: var(--muted); font-size: 13px; margin-top: 4px; }
+.kpi-note { color: var(--muted); font-size: 13px; margin-top: 6px; }
 
-.plan-actions { display: flex; flex-wrap: wrap; gap: 8px; margin: 14px 0 18px; }
+.plan-actions { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0 8px; }
 .plan-actions .btn { flex: 1 1 auto; }
 
 table.checks { width: 100%; border-collapse: collapse; table-layout: fixed; font-size: 14px; }
-table.checks th { text-align: left; color: var(--muted); font-weight: 500; font-size: 12.5px; border-bottom: 1px solid var(--line); padding: 4px 3px 6px; }
+table.checks th { text-align: left; font-size: 10.5px; border-bottom: 1px solid var(--line); padding: 4px 3px 6px; }
 table.checks th:nth-child(1) { width: 38%; }
 table.checks th:nth-child(4) { width: 22%; }
 table.checks td { border-bottom: 1px solid var(--line); padding: 9px 3px; vertical-align: top; overflow-wrap: anywhere; }
@@ -419,7 +454,7 @@ ol.legs strong { font-weight: 600; }
 
 .profile-wrap { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 8px; }
 svg.profile { width: 100%; height: auto; display: block; cursor: crosshair; }
-svg.profile .axis { fill: var(--muted); font-size: 9px; font-family: var(--mono); }
+svg.profile .axis { fill: var(--muted); font-size: 10.5px; font-family: var(--mono); }
 .profile-readout { font-size: 12.5px; color: var(--muted); padding: 6px 2px 0; }
 
 /* ---------- 6. Stops tab and photo viewer ---------- */
@@ -438,7 +473,7 @@ svg.profile .axis { fill: var(--muted); font-size: 9px; font-family: var(--mono)
 .stop-card > :last-child { margin-bottom: 14px; }
 .stop-photo { position: relative; margin: 0 0 10px; background: #05070a; }
 .stop-photo-btn { display: block; width: 100%; padding: 0; border: 0; background: none; cursor: zoom-in; }
-.stop-photo-img { display: block; width: 100%; height: 190px; object-fit: cover; }
+.stop-photo-img { display: block; width: 100%; height: 170px; object-fit: cover; }
 .photo-tag, .photo-count {
   position: absolute;
   top: 10px;
@@ -465,7 +500,7 @@ svg.profile .axis { fill: var(--muted); font-size: 9px; font-family: var(--mono)
 .stop-badge.is-haven { background: var(--accent); color: var(--bg); border-color: var(--accent); }
 .stop-name { margin: 0; font-size: 17px; font-weight: 600; }
 .stop-objective { margin: 6px 14px 10px; font-size: 15px; }
-.stop-label { font-size: 12.5px; font-weight: 600; color: var(--muted); }
+.stop-label { display: block; margin-top: 4px; }
 .stop-finding { margin: 2px 14px 10px; font-size: 15px; }
 .stop-facts { display: grid; grid-template-columns: auto 1fr; gap: 6px 12px; margin-top: 4px; margin-bottom: 12px; }
 .stop-facts dt { color: var(--muted); }
@@ -528,7 +563,7 @@ svg.profile .axis { fill: var(--muted); font-size: 9px; font-family: var(--mono)
 .check-line { display: flex; align-items: center; gap: 8px; margin: 10px 0 4px; }
 .daybar-wrap { margin-bottom: 12px; }
 svg.daybar { width: 100%; height: auto; display: block; }
-svg.daybar .axis { fill: var(--muted); font-size: 9px; font-family: var(--mono); }
+svg.daybar .axis { fill: var(--muted); font-size: 10.5px; font-family: var(--mono); }
 .daybar-key { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 6px; font-size: 12.5px; color: var(--muted); }
 .key { display: inline-block; width: 14px; height: 10px; border: 1px solid var(--line); border-radius: 2px; }
 .key-night { background: #05070a; }
@@ -537,27 +572,28 @@ svg.daybar .axis { fill: var(--muted); font-size: 9px; font-family: var(--mono);
 .key-eva { background: var(--accent); }
 
 .drill-card { border-color: rgba(255, 92, 92, 0.35); }
+/* Outline style: solid red is kept for the live alert itself. */
 .drill-btn {
   width: 100%;
   min-height: 44px;
   margin-bottom: 8px;
   padding: 8px 12px;
-  background: #7a0000;
-  color: #ffffff;
+  background: transparent;
+  color: var(--fail);
   border: 1px solid var(--fail);
-  border-radius: 8px;
+  border-radius: var(--radius);
   font: inherit;
   font-weight: 600;
   cursor: pointer;
 }
-.drill-btn:hover { background: #8f0a0a; }
+.drill-btn:hover { background: rgba(255, 92, 92, 0.12); }
 .drill-btn:disabled { opacity: 0.55; cursor: default; }
 .drill-active { margin-top: 14px; }
 .drill-active[hidden] { display: none; }
-.drill-label { display: block; color: var(--muted); font-size: 13.5px; }
+.drill-label { display: block; }
 #crew-slider { width: 100%; margin: 8px 0; accent-color: var(--fail); }
 .drill-position { font-size: 14px; }
-.drill-shelter { margin: 8px 0 2px; font-size: 28px; font-weight: 600; }
+.drill-shelter { margin: 8px 0 2px; font-size: 28px; font-weight: 500; }
 .drill-active .stop-fly { margin-top: 12px; }
 .donki { margin-top: 18px; }
 
@@ -603,56 +639,42 @@ svg.daybar .axis { fill: var(--muted); font-size: 9px; font-family: var(--mono);
 }
 .intro[hidden] { display: none; }
 body.intro-is-open { overflow: hidden; }
-.intro-bg { position: fixed; inset: 0; width: 100%; height: 100%; object-fit: cover; filter: brightness(0.55); }
+.intro-bg { position: fixed; inset: 0; width: 100%; height: 100%; object-fit: cover; filter: brightness(0.85); }
 .intro-shade {
   position: fixed;
   inset: 0;
-  background: linear-gradient(90deg, rgba(5, 7, 10, 0.92) 0%, rgba(5, 7, 10, 0.75) 45%, rgba(5, 7, 10, 0.35) 100%);
+  background: linear-gradient(90deg, rgba(5, 7, 10, 0.94) 0%, rgba(5, 7, 10, 0.8) 42%, rgba(5, 7, 10, 0.15) 100%);
 }
 .intro-card { position: relative; width: min(640px, 100%); justify-self: start; margin-left: 4vw; }
-.intro-eyebrow { color: var(--muted); font-size: 13px; }
+.intro-eyebrow { color: var(--muted); font-family: var(--mono); font-size: 11.5px; letter-spacing: 0.08em; text-transform: uppercase; }
 .intro-title { margin: 10px 0 0; font-size: clamp(40px, 6vw, 64px); font-weight: 700; letter-spacing: 0.12em; line-height: 1; }
 .intro-tagline { margin: 10px 0 22px; font-size: 20px; color: var(--accent); }
-.intro-lead { margin: 0 0 12px; font-size: 16px; line-height: 1.6; max-width: 58ch; }
-.intro-how { margin: 24px 0 10px; font-weight: 600; }
-.intro-steps { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-.intro-step {
-  display: flex;
-  gap: 12px;
-  align-items: flex-start;
-  width: 100%;
-  height: 100%;
-  padding: 12px;
-  background: rgba(18, 24, 33, 0.85);
-  color: var(--text);
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
-  font: inherit;
-  text-align: left;
-  cursor: pointer;
+/* The card takes focus when the dialog opens (for screen readers); no ring is drawn for it. */
+.intro .intro-card:focus, .intro .intro-card:focus-visible { outline: none; }
+.intro-lead { margin: 0 0 12px; font-size: 17px; line-height: 1.6; max-width: 58ch; }
+.intro-lead-2 { font-size: 15px; color: #c6d0db; }
+/* Three keys to reading the site: plain lines on a thin amber rule. */
+.intro-points {
+  list-style: none;
+  margin: 20px 0 0;
+  padding: 2px 0 2px 14px;
+  border-left: 2px solid var(--accent);
+  max-width: 58ch;
+  font-size: 14.5px;
+  color: #c6d0db;
 }
-.intro-step:hover { border-color: var(--accent); }
-.intro-step strong { display: block; font-weight: 600; }
-.intro-step-text { display: block; color: var(--muted); font-size: 14px; margin-top: 2px; }
-.intro-step-n {
-  flex: 0 0 auto;
-  display: grid;
-  place-items: center;
-  width: 26px;
-  height: 26px;
-  border-radius: 50%;
-  border: 1px solid var(--muted);
-  color: var(--muted);
-  font-size: 13px;
-  font-weight: 600;
-}
-.intro-actions { margin-top: 22px; }
-.intro-start { min-height: 48px; padding: 10px 26px; font-size: 16px; }
+.intro-points li + li { margin-top: 6px; }
+.intro-points strong { color: var(--text); font-weight: 600; }
+.intro-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 24px; }
+.intro-start, .intro-helmet { min-height: 48px; padding: 10px 24px; font-size: 16px; }
+.intro-helmet { background: rgba(18, 24, 33, 0.85); }
 .intro-fine { margin-top: 18px; color: var(--muted); font-size: 13px; }
 .intro-credit { position: fixed; right: 14px; bottom: 10px; color: var(--muted); font-size: 12px; text-shadow: 0 1px 2px #000; }
 
 /* ---------- 10. Helmet HUD ---------- */
-/* Every HUD text is at least 24 px, light on near-black for contrast above 7:1. */
+/* Large screens: HUD text at least 24 px (16 px for the photo caption). Phones use a
+   smaller scale so all six readouts fit one screen (section 12). Light on near-black
+   everywhere, for contrast above 7:1. */
 body.hud-is-open { overflow: hidden; }
 .hud {
   position: fixed;
@@ -777,9 +799,9 @@ body.hud-is-open { overflow: hidden; }
 .hud-caption {
   position: absolute;
   left: 50%;
-  bottom: 4px;
+  bottom: 10px;
   transform: translateX(-50%);
-  font-size: 24px;
+  font-size: 16px;
   color: #e6edf3;
   white-space: nowrap;
   text-shadow: 0 1px 3px #000;
@@ -806,56 +828,108 @@ select:focus-visible, input:focus-visible, summary:focus-visible,
 }
 
 /* ---------- 12. Phones and narrow windows ---------- */
+@media (max-width: 1200px) {
+  .brand-tagline { display: none; }
+}
 @media (max-width: 1000px) {
   .site-label { display: none; }
 }
+
+/* Phones held upright and narrow windows: map on top, panel below as a
+   bottom sheet, tabs as a bottom bar. */
 @media (max-width: 800px) {
   html, body { overflow-x: hidden; }
+  html, body { height: 100%; height: 100dvh; }   /* dvh: the height left after the phone's own toolbars */
   .topbar { padding: 0 10px; gap: 8px; }
   .brand { gap: 8px; }
   .brand-name { font-size: 16px; letter-spacing: 0.12em; }
-  .brand-tagline { display: none; }
   .topbar-btn, .hud-open-btn { min-height: 44px; padding: 6px 12px; }
 
-  /* Map on top (55%), panel below as a bottom sheet with the tabs as a bottom bar. */
   .layout { flex-direction: column; }
-  .map-wrap { flex: 0 0 55%; }
+  .map-wrap { flex: 0 0 46%; }
   .panel { flex: 1 1 auto; width: 100%; border-left: 0; border-top: 1px solid var(--line); min-height: 0; }
   .tab-body { order: 1; padding: 14px; }
-  .panel-footer { order: 2; padding: 6px 14px; font-size: 11px; }
-  .tabs { order: 3; padding: 0; border-bottom: 0; border-top: 1px solid var(--line); background: var(--panel); }
-  .tab { border-bottom: 0; border-top: 2px solid transparent; font-size: 13.5px; }
+  /* The disclaimer is also on the welcome screen and in Sources, so the
+     footer is dropped here to give the panel its room back. */
+  .panel-footer { display: none; }
+  .tabs { order: 3; padding: 0 0 env(safe-area-inset-bottom); border-bottom: 0; border-top: 1px solid var(--line); background: var(--panel); }
+  .tab { min-height: 52px; border-bottom: 0; border-top: 2px solid transparent; font-size: 13px; }
   .tab.is-active { border-top-color: var(--accent); }
 
-  /* Map view buttons scroll sideways if they do not fit. */
-  .view-bar { top: 10px; left: 56px; right: 62px; transform: none; max-width: none; overflow-x: auto; scrollbar-width: none; }
-  .view-btn { min-height: 38px; padding: 6px 10px; font-size: 13px; }
+  /* View buttons: one full-width strip along the top edge of the map. */
+  .view-bar {
+    top: 0; left: 0; right: 0;
+    transform: none;
+    max-width: none;
+    border-width: 0 0 1px;
+    border-radius: 0;
+    padding: 4px;
+  }
+  .view-btn { flex: 1 1 0; min-height: 44px; padding: 6px 4px; font-size: 13px; }
+  .lbl-full { display: none; }
+  .lbl-short { display: inline; }
+  .north-arrow { display: none; }     /* the map is always north-up; the HUD mini-map shows N */
+  .leaflet-top { top: 54px; }         /* keep the layer button below the view strip */
+  .leaflet-touch .leaflet-control-zoom { display: none; }   /* pinch to zoom on touch screens */
+  .coord-readout { display: none; }   /* touch screens: tapping the map shows the position in a popup */
 
   /* Tap targets at least 44 px. */
-  .leaflet-bar a, .leaflet-touch .leaflet-bar a { width: 44px; height: 44px; line-height: 44px; }
   .leaflet-control-layers-toggle, .leaflet-touch .leaflet-control-layers-toggle { width: 44px; height: 44px; }
   .leaflet-control-layers label { min-height: 44px; display: flex; align-items: center; }
   .btn, .stop-fly, .sol-picker, .viewer-btn, .drill-btn { min-height: 44px; }
   .stop-actions a { display: inline-flex; align-items: center; min-height: 44px; }
   #crew-slider { height: 44px; }
 
-  .legend { max-width: 130px; padding: 6px 8px; font-size: 11px; margin-bottom: 52px !important; }
+  /* Legend: one compact block; long notes are left to the panel. */
+  .legend { width: 156px; padding: 5px 8px; font-size: 11px; margin-bottom: 26px !important; }
+  .legend-title { display: none; }   /* the active view button already names the layer */
   .legend-block + .legend-block { margin-top: 4px; padding-top: 4px; }
+  .legend-swatch { width: 10px; height: 8px; }
+  .legend-row { gap: 5px; margin: 1px 0; }
+  .legend-note { display: none; }
+  .legend-ramp-labels { font-size: 10px; }
+  .legend-ramp-labels span { white-space: nowrap; }
+  .leaflet-top .legend { margin: 6px 0 0 8px !important; }
+  .leaflet-control-attribution { max-width: 62vw; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+  /* Storm banner: only the alert line and its rule; details stay in Conditions. */
   .storm-banner { top: 56px; width: calc(100% - 20px); font-size: 12.5px; padding: 8px 10px; }
-  .storm-title { font-size: 14px; }
+  .storm-banner > div:not(.storm-title):not(.storm-rule) { display: none; }
+  .storm-title { font-size: 14px; margin-bottom: 0; }
   .stop-photo-img { height: 160px; }
 
-  .intro { padding: 16px; place-items: start; }
+  .intro { padding: 20px 16px; place-items: start; }
   .intro-card { margin-left: 0; }
-  .intro-shade { background: rgba(5, 7, 10, 0.82); }
-  .intro-steps { grid-template-columns: 1fr; }
-  .intro-tagline { font-size: 17px; }
+  .intro-shade { background: rgba(5, 7, 10, 0.84); }
+  .intro-title { font-size: clamp(34px, 10vw, 64px); }
+  .intro-tagline { font-size: 17px; margin-bottom: 16px; }
   .intro-lead { font-size: 15px; }
+  .intro-lead-2 { font-size: 14px; }
+  .intro-points { font-size: 14px; margin-top: 16px; }
+  .intro-actions { margin-top: 20px; }
+  .intro-start, .intro-helmet { flex: 1 1 auto; }
   .intro-credit { position: static; margin-top: 12px; text-align: left; }
 }
 
-/* HUD on phones and small screens: readouts sit in a grid around a clear centre.
-   Text stays at least 24 px. */
+/* Phones held sideways (short and wide): map and panel side by side again,
+   tabs back on top, a slimmer top bar. */
+@media (max-height: 560px) and (orientation: landscape) {
+  :root { --topbar-h: 44px; }
+  .topbar-btn, .hud-open-btn { min-height: 34px; padding: 4px 10px; }
+  .layout { flex-direction: row; }
+  .map-wrap { flex: 1 1 auto; }
+  .panel { flex: 0 0 44%; width: 44%; border-top: 0; border-left: 1px solid var(--line); }
+  .tabs { order: 0; padding: 0; border-top: 0; border-bottom: 1px solid var(--line); }
+  .tab { min-height: 40px; padding: 8px 4px; border-top: 0; border-bottom: 2px solid transparent; }
+  .tab.is-active { border-bottom-color: var(--accent); }
+  .tab-body { padding: 12px; }
+  .view-btn { min-height: 34px; }
+  .leaflet-top { top: 44px; }
+  .legend { display: none; }   /* too little height; the panel and view buttons name the layer */
+}
+
+/* HUD on phones and small screens: readouts sit in a grid around a clear
+   centre, sized to fit one screen without scrolling. */
 @media (max-width: 800px), (max-height: 560px) {
   .hud {
     display: grid;
@@ -870,8 +944,10 @@ select:focus-visible, input:focus-visible, summary:focus-visible,
       "mini mini"
       "controls controls"
       "caption caption";
-    gap: 8px;
-    padding: 10px 12px 6px;
+    gap: 6px;
+    height: 100%;
+    height: 100dvh;
+    padding: 8px 10px 6px;
     overflow-y: auto;   /* last resort on very small screens: scroll rather than cut off */
   }
   .hud-readout { position: relative; inset: auto; transform: none; max-width: none; padding: 6px 10px; z-index: 1; }
@@ -882,17 +958,19 @@ select:focus-visible, input:focus-visible, summary:focus-visible,
   .hud-br { grid-area: br; }
   .hud-more { display: none; }
   .hud-short { display: inline; }
-  .hud-label { letter-spacing: 0.04em; }
-  .hud-value { font-size: 28px; white-space: normal; overflow-wrap: anywhere; }
-  .hud-shelter .hud-value { font-size: 44px; white-space: nowrap; }
-  .hud-swatch { width: 24px; height: 24px; }
-  .hud-alert { grid-area: alert; position: relative; top: auto; left: auto; transform: none; width: auto; white-space: normal; padding: 4px 10px; z-index: 1; }
-  .hud-science { grid-area: centre; position: relative; top: auto; left: auto; transform: none; align-self: center; justify-self: center; white-space: normal; z-index: 1; }
-  .hud-mini-wrap { grid-area: mini; position: relative; bottom: auto; left: auto; transform: none; justify-self: center; width: 120px; height: 120px; z-index: 1; }
+  .hud-label { font-size: 12px; letter-spacing: 0.1em; }
+  .hud-value { font-size: 24px; white-space: normal; overflow-wrap: anywhere; }
+  .hud-sub { font-size: 14px; }
+  .hud-shelter .hud-value { font-size: 40px; white-space: nowrap; }
+  .hud-swatch { width: 16px; height: 16px; margin-right: 6px; border-width: 1px; }
+  .hud-alert { grid-area: alert; position: relative; top: auto; left: auto; transform: none; width: auto; white-space: normal; padding: 6px 10px; border-width: 2px; font-size: 15px; z-index: 1; }
+  .hud-alert .icon svg { width: 18px; height: 18px; }
+  .hud-science { grid-area: centre; position: relative; top: auto; left: auto; transform: none; align-self: center; justify-self: center; white-space: normal; font-size: 16px; z-index: 1; }
+  .hud-mini-wrap { grid-area: mini; position: relative; bottom: auto; left: auto; transform: none; justify-self: center; width: 88px; height: 88px; z-index: 1; }
   .hud-controls { grid-area: controls; position: relative; left: auto; bottom: auto; transform: none; width: 100%; gap: 8px; z-index: 1; }
-  .hud-btn { min-height: 44px; padding: 4px 10px; }
-  .hud-caption { grid-area: caption; position: relative; left: auto; bottom: auto; transform: none; white-space: normal; text-align: center; z-index: 1; }
-  .hud-visor::after { inset: 4px; }
+  .hud-btn { min-height: 44px; padding: 4px 14px; font-size: 16px; }
+  .hud-caption { grid-area: caption; position: relative; left: auto; bottom: auto; transform: none; white-space: normal; text-align: center; font-size: 12px; z-index: 1; }
+  .hud-visor::after { display: none; }   /* the visor ring would cut through the readouts */
 }
 /* Phone held sideways: three readouts across the top, mini-map between the bottom two. */
 @media (max-height: 560px) and (min-width: 561px) {
@@ -909,9 +987,10 @@ select:focus-visible, input:focus-visible, summary:focus-visible,
     gap: 4px 8px;
     padding: 6px 12px 2px;
   }
-  .hud-mini-wrap { width: 96px; height: 96px; align-self: end; }
-  .hud-readout { padding: 2px 8px; }
-  .hud-sub { line-height: 1.1; }
+  .hud-mini-wrap { width: 80px; height: 80px; align-self: end; }
+  .hud-readout { padding: 3px 8px; }
+  .hud-sub { line-height: 1.15; }
+  .hud-shelter .hud-value { font-size: 34px; }
 }
 /* Phone held upright: EVA CLOCK gets a full-width row so its dose line fits. */
 @media (max-width: 560px) {
@@ -925,12 +1004,15 @@ select:focus-visible, input:focus-visible, summary:focus-visible,
       "mini mini"
       "controls controls"
       "caption caption";
-    gap: 6px;
   }
-  .hud-readout { padding: 6px 8px; }
   .hud-tc { text-align: right; }
-  .hud-shelter .hud-value { font-size: 40px; }
-  .hud-mini-wrap { width: 96px; height: 96px; justify-self: center; }
+}
+/* The smallest phones (320 px wide): slightly smaller values so the slope
+   swatch, angle and class fit on one line. */
+@media (max-width: 360px) {
+  .hud-value { font-size: 20px; }
+  .hud-swatch { width: 14px; height: 14px; margin-right: 4px; vertical-align: 0; }
+  .hud-bl .hud-value { display: inline; }   /* the angle stays beside its colour swatch */
 }
 
 /* ---------- 13. Printable cuff card ---------- */
@@ -952,25 +1034,4 @@ select:focus-visible, input:focus-visible, summary:focus-visible,
   #cuff-card th, #cuff-card td { border: 0.75pt solid #000000; padding: 2pt 4pt; text-align: left; vertical-align: top; }
   #cuff-card th { background: #e6e6e6 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
   #cuff-card .cuff-note { margin-top: 8pt; font-weight: bold; }
-}
-
-/* ---------- Late adjustments after testing on real tiles ---------- */
-.lbl-short { display: none; }
-.kpi-label { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.intro-bg { filter: brightness(0.85); }
-.intro-shade { background: linear-gradient(90deg, rgba(5, 7, 10, 0.94) 0%, rgba(5, 7, 10, 0.8) 42%, rgba(5, 7, 10, 0.15) 100%); }
-@media (max-width: 800px) {
-  .lbl-full { display: none; }
-  .lbl-short { display: inline; }
-  .view-bar { left: 50px; right: auto; }
-  .coord-readout { display: none; }   /* touch screens: tapping the map shows the position in a popup */
-  .legend { max-width: 118px; font-size: 10.5px; padding: 5px 7px; margin-bottom: 30px !important; }
-  .legend-swatch { width: 10px; height: 8px; }
-  .legend-row { gap: 5px; margin: 1px 0; }
-  .legend-note { display: none; }
-  .panel-footer { font-size: 10.5px; line-height: 1.35; }
-  .intro-shade { background: rgba(5, 7, 10, 0.84); }
-}
-@media (max-width: 800px) {
-  .view-btn { min-height: 44px; }   /* tap targets at least 44 px */
 }

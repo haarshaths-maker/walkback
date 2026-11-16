@@ -1,8 +1,10 @@
 // AI-assisted: written with Claude Code (Opus 5.5), reviewed by the team.
 //
-// intro.js shows a welcome screen the first time the page opens: what
-// WALKBACK is, why it matters, and how to explore it. "Start planning" (or
-// Esc) closes it; the "About" button in the top bar opens it again.
+// intro.js shows a welcome screen the first time the page opens: the one
+// problem WALKBACK solves, what the site is (one pre-planned walk, not a
+// route finder), and how to read it. "Open the plan" (or Esc) closes it;
+// "Helmet view" closes it and opens the HUD; the "About" button in the top
+// bar opens it again.
 // The background is NASA's HiRISE image of boxwork ridges (img8 in
 // data/images.json), credited on screen.
 // Whether it was closed is kept in a variable only, so a fresh visit always
@@ -24,12 +26,11 @@
     return node;
   }
 
-  // The four places to go, matching the tabs and the HUD button.
-  var STEPS = [
-    ["Plan", "The computed route, its five safety checks and the minutes back to shelter.", "plan"],
-    ["Stops", "What Curiosity found at each of the five science stops, with its photos.", "stops"],
-    ["Conditions", "Weather Curiosity measured here, and a solar-storm drill.", "conditions"],
-    ["Helmet view", "Walk the route through a visor display with six numbers.", "hud"]
+  // Three one-line keys to reading the site: [what you see, what it means].
+  var POINTS = [
+    ["Map colours", "walking minutes back to the rover, from every point of the site."],
+    ["Plan", "the route and five safety checks, each pass or fail, with its NASA source."],
+    ["Helmet view", "walk the route as the crew would see it through the visor."]
   ];
 
   var box = null;
@@ -41,44 +42,38 @@
     var credit = el("div", { class: "intro-credit",
       text: "Background: boxwork ridges seen from orbit by HiRISE. NASA/JPL-Caltech/Univ. of Arizona." });
 
-    var start = el("button", { type: "button", class: "btn btn-primary intro-start", text: "Start planning" });
+    var start = el("button", { type: "button", class: "btn btn-primary intro-start", text: "Open the plan" });
     start.addEventListener("click", close);
 
-    var list = el("ol", { class: "intro-steps" });
-    STEPS.forEach(function (s, i) {
-      var b = el("button", { type: "button", class: "intro-step" }, [
-        el("span", { class: "intro-step-n", text: String(i + 1) }),
-        el("span", {}, [el("strong", { text: s[0] }), el("span", { class: "intro-step-text", text: s[1] })])
-      ]);
-      b.addEventListener("click", function () {
-        close();
-        if (s[2] === "hud") {
-          var hud = document.getElementById("hud-open");
-          if (hud && !hud.disabled) { hud.click(); }
-        } else {
-          var tab = document.getElementById("tabbtn-" + s[2]);
-          if (tab) { tab.click(); }
-        }
-      });
-      list.appendChild(el("li", {}, [b]));
+    var helmet = el("button", { type: "button", class: "btn intro-helmet", text: "Helmet view" });
+    helmet.addEventListener("click", function () {
+      close();
+      var hud = document.getElementById("hud-open");
+      if (hud && !hud.disabled) { hud.click(); }
     });
+
+    var list = el("ul", { class: "intro-points" });
+    POINTS.forEach(function (p) {
+      list.appendChild(el("li", {}, [el("strong", { text: p[0] + ": " }), p[1]]));
+    });
+
+    var card = el("div", { class: "intro-card", tabindex: "-1" }, [
+      el("div", { class: "intro-eyebrow", text: "NASA Space Apps Challenge 2026 · Interplanetary Survival Guide: Martian Map" }),
+      el("h1", { class: "intro-title", id: "intro-title", text: "WALKBACK" }),
+      el("p", { class: "intro-tagline", text: "Plan the walk out. Know the walk back." }),
+      el("p", { class: "intro-lead",
+        text: "On Mars, help is 4 to 24 minutes away by radio. So the crew's map has to answer one question at every step: how many minutes am I from shelter?" }),
+      el("p", { class: "intro-lead intro-lead-2",
+        text: "This is one pre-planned Marswalk at the boxwork ridges of Mount Sharp in Gale Crater. The crew leaves a parked pressurised rover, visits five sites where NASA's Curiosity rover drilled and took pictures, and walks back. There is no destination to choose: the route is computed from NASA data, and you inspect it." }),
+      list,
+      el("div", { class: "intro-actions" }, [start, helmet]),
+      el("p", { class: "intro-fine", text: "Student project. Not affiliated with or endorsed by NASA. A planning aid, not flight software." })
+    ]);
 
     box = el("div", { class: "intro", role: "dialog", "aria-modal": "true", "aria-labelledby": "intro-title" }, [
       bg,
       el("div", { class: "intro-shade", "aria-hidden": "true" }),
-      el("div", { class: "intro-card" }, [
-        el("div", { class: "intro-eyebrow", text: "NASA Space Apps Challenge 2026 · Interplanetary Survival Guide: Martian Map" }),
-        el("h1", { class: "intro-title", id: "intro-title", text: "WALKBACK" }),
-        el("p", { class: "intro-tagline", text: "Plan the walk out. Know the walk back." }),
-        el("p", { class: "intro-lead",
-          text: "The first crews on Mars will be 4 to 24 minutes from Earth by radio, on ground nobody has walked. Their map has to answer one question at every step: how far am I from shelter?" }),
-        el("p", { class: "intro-lead",
-          text: "WALKBACK plans one real Marswalk across the boxwork ridges of Mount Sharp in Gale Crater, through five places where NASA's Curiosity rover drilled and took pictures, using NASA elevation, imagery, weather and radiation data." }),
-        el("div", { class: "intro-how", text: "How to explore" }),
-        list,
-        el("div", { class: "intro-actions" }, [start]),
-        el("p", { class: "intro-fine", text: "Student project. Not affiliated with or endorsed by NASA. A planning aid, not flight software." })
-      ]),
+      card,
       credit
     ]);
     document.body.appendChild(box);
@@ -92,14 +87,19 @@
     if (!box) { build(); }
     returnFocus = document.activeElement;
     box.hidden = false;
+    box.scrollTop = 0;
     document.body.classList.add("intro-is-open");
-    box.querySelector(".intro-start").focus();
+    // Focus the card itself (not a button) so screen readers start at the
+    // top and no focus ring sits on the button before anyone uses the keyboard.
+    box.querySelector(".intro-card").focus({ preventScroll: true });
   }
 
   function close() {
     if (!box) { return; }
     box.hidden = true;
     document.body.classList.remove("intro-is-open");
+    // The map may have been sized while hidden behind the dialog.
+    if (window.WALKBACK && WALKBACK.map) { WALKBACK.map.invalidateSize(); }
     if (returnFocus && returnFocus.focus && returnFocus !== document.body) { returnFocus.focus(); }
   }
 

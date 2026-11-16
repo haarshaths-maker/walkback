@@ -404,7 +404,10 @@
     shownPhotoStop = null;
     showAlert();
     render();
-    ui.playBtn.focus();
+    // Start at the top (small screens can scroll the HUD) and do not let the
+    // focus jump scroll the alert out of view.
+    ui.root.scrollTop = 0;
+    ui.playBtn.focus({ preventScroll: true });
   }
 
   function closeHud() {
