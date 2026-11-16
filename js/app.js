@@ -1,4 +1,4 @@
-// AI-assisted: written with Claude (Fable 5.2) and Claude Code (Opus 5.5), reviewed by the team.
+// AI-assisted: written with Claude (Fable 5.2) and Claude Code (Opus 5.5) and GPT (Codex, gpt-6.1-sol), reviewed by the team.
 //
 // app.js builds the map and the side panel.
 // Build step T3: base map, Mars Trek layers, stop markers, map furniture, tabs.
@@ -100,7 +100,30 @@
       zoomControl: true,
       worldCopyJump: false
     });
-    map.fitBounds(siteBounds, { padding: [20, 20] });
+    var container = map.getContainer();
+    if (container.clientWidth > 0 && container.clientHeight > 0) {
+      map.fitBounds(siteBounds, { padding: [20, 20] });
+    } else {
+      // A hidden map has no usable size for fitBounds. Give the other scripts
+      // an initial view, then fit the site once the map has a real width and height.
+      map.setView(siteBounds.getCenter(), WALKBACK.minZoom);
+      var initialFitObserver;
+      var hasFittedSite = false;
+      function fitSiteWhenVisible() {
+        if (hasFittedSite || container.clientWidth === 0 || container.clientHeight === 0) { return; }
+        // Stop observing before invalidateSize, which can fire a resize event too.
+        hasFittedSite = true;
+        if (initialFitObserver) { initialFitObserver.disconnect(); }
+        map.off("resize", fitSiteWhenVisible);
+        map.invalidateSize({ pan: false });
+        map.fitBounds(siteBounds, { padding: [20, 20], animate: false });
+      }
+      map.on("resize", fitSiteWhenVisible);
+      if (window.ResizeObserver) {
+        initialFitObserver = new ResizeObserver(fitSiteWhenVisible);
+        initialFitObserver.observe(container);
+      }
+    }
 
     // ---- Base layers from Mars Trek (radio buttons in the layer switcher) ----
     var baseLayers = {};
